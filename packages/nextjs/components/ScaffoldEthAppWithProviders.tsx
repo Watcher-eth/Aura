@@ -14,7 +14,7 @@ import { useInitializeNativeCurrencyPrice } from "~~/hooks/scaffold-eth";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
 
-const AuraApp = ({ children }: { children: React.ReactNode }) => {
+const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   useInitializeNativeCurrencyPrice();
 
   return (

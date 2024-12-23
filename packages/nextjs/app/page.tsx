@@ -10,8 +10,8 @@ import GlowingSearch from "../components/search/GlowingSearchBar";
 const Home: NextPage = () => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[84vh]  bg-white">
+      
       <div className="relative  bg-white -mt-12">
-    <div className="absolute inset-0 bg-[url('/path-to-grid-pattern.png')] bg-repeat opacity-50"></div>
   
     <div className="absolute inset-0 flex items-center justify-center">
       <div className="absolute w-[500px] h-[500px] rounded-full border border-gray-300 opacity-50"></div>

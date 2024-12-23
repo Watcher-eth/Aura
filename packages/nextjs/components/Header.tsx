@@ -95,15 +95,14 @@ export const Header = () => {
             </ul>
           )}
         </div>
-        <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-6 rounded-lg shrink-0">
-          <div className="flex relative w-8 h-8 rounded-lg">
-            <Image alt="SE2 logo" className="cursor-pointer rounded-lg" fill  src="/Icon.png" />
-          </div>
+        <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-3 rounded-lg shrink-0">
+            <img alt="SE2 logo" className="cursor-pointer  w-14 h-14 rounded-lg"   src="https://media.istockphoto.com/id/1428028070/vector/abstract-background-with-blurry-magenta-and-orange-circular-shape-with-grain-spray-effect.jpg?s=612x612&w=0&k=20&c=jekWiLhrTlbV_b4ltLiKGYrDSilgvn-9H_xLWt4hL4M=" />
           <div className="flex flex-col">
             <span className="font-bold text-[2rem] leading-tight">Aura</span>
+
           </div>
         </Link>
-        
+
       </div>
       <div className="navbar-end flex-grow mr-4">
         <ConnectKitButton />

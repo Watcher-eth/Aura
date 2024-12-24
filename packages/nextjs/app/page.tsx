@@ -23,6 +23,7 @@ const Home: NextPage = () => {
   
     <div className="relative flex-col z-10 flex items-center justify-center h-full">
     <div className="text-[7rem] font-semibold mb-2 text-[#171717]">Aura</div>
+    
     <GlowingSearch />    </div>
   </div>
      

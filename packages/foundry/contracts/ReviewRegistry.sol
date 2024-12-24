@@ -8,7 +8,7 @@ contract ReviewRegistry {
 
     struct Review {
         string metadataURI;
-        string contractName;
+        address contractAddress;
         uint256 createdAt;
         address createdBy;
         uint8 rating; // 1-5
@@ -17,18 +17,18 @@ contract ReviewRegistry {
     // Array of pointers to stored reviews
     address[] private reviewPointers;
 
-    event ReviewAdded(uint256 indexed reviewId, address indexed reviewer, string contractName, uint8 rating);
+    event ReviewAdded(uint256 indexed reviewId, address indexed reviewer, address contractName, uint8 rating);
 
     /// @notice Adds a new review to the registry.
     /// @param metadataURI URI pointing to the review metadata.
     /// @param contractName Name of the contract being reviewed.
     /// @param rating Rating between 1 to 5.
-    function addReview(string calldata metadataURI, string calldata contractName, uint8 rating) external {
+    function addReview(string calldata metadataURI, address contractAddress, uint8 rating) external {
         require(rating >= 1 && rating <= 5, "Rating must be between 1 and 5");
 
         Review memory newReview = Review({
             metadataURI: metadataURI,
-            contractName: contractName,
+            contractAddress: contractAddress,
             createdAt: block.timestamp,
             createdBy: msg.sender,
             rating: rating
@@ -43,7 +43,7 @@ contract ReviewRegistry {
         // Add the pointer to the array
         reviewPointers.push(pointer);
 
-        emit ReviewAdded(reviewPointers.length - 1, msg.sender, contractName, rating);
+        emit ReviewAdded(reviewPointers.length - 1, msg.sender, contractAddress, rating);
     }
 
     /// @notice Retrieves a review by its ID.
@@ -64,9 +64,5 @@ contract ReviewRegistry {
         return reviewPointers.length;
     }
 
-    /// @notice Retrieves all review pointers. Useful for off-chain indexing.
-    /// @return Array of addresses pointing to stored reviews.
-    function getAllReviewPointers() external view returns (address[] memory) {
-        return reviewPointers;
-    }
+
 }

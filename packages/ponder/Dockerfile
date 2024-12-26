@@ -12,7 +12,8 @@ WORKDIR /app
 # Enable and prepare Corepack for Yarn
 RUN corepack enable && corepack prepare yarn@stable --activate
 
-# Copy package files
+# Copy yarn and package files
+COPY .yarnrc.yml ./
 COPY package.json ./
 
 # Install dependencies

@@ -9,7 +9,8 @@
     "serve": "ponder serve",
     "start": "ponder start",
     "typecheck": "tsc",
-    "postinstall": "node-gyp rebuild"
+    "postinstall": "node-gyp rebuild",
+    "rebuild": "node-gyp rebuild"
   },
   "dependencies": {
     "@ponder/core": "^0.4.28",
@@ -20,9 +21,11 @@
     "@types/node": "^20.10.0",
     "eslint": "^8.54.0",
     "eslint-config-ponder": "^0.4.28",
-    "typescript": "^5.3.2"
+    "typescript": "^5.3.2",
+    "node-gyp": "^9.4.0"
   },
   "engines": {
     "node": ">=18.14"
+    
   }
 }

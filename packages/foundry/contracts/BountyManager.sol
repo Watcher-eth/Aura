@@ -95,9 +95,6 @@ contract BountyManager {
         emit BountyClaimed(bountyId, msg.sender, netReward, platformFee);
     }
 
-    /// @dev Internal function to fetch review details from the ReviewRegistry.
-    /// @param reviewId The ID of the review to fetch.
-    /// @return metadataURI, contractAddress, createdAt, createdBy, rating
     function getReviewDetails(uint256 reviewId) internal view returns (
         string memory metadataURI,
         address contractAddress,

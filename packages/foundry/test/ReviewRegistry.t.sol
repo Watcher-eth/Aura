@@ -11,13 +11,7 @@ contract ReviewRegistryTest is Test {
         reviewRegistry = new ReviewRegistry(); // Initialize your contract
     }
 
-    function test_RevertCondition() public {
-        // Test a condition that should revert
-        vm.expectRevert();
-        reviewRegistry.someFunctionThatShouldRevert();
-    }
-
-    function test_AddReview() public {
+      function test_AddReview() public {
         reviewRegistry.addReview("ipfs://metadata", "Test Contract", 5);
         // Check that the review was added correctly
         // Implement retrieval logic and assertions here

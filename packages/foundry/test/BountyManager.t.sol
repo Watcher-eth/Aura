@@ -11,14 +11,14 @@ contract BountyManagerTest is Test {
 
     function setUp() public {
         reviewRegistry = new ReviewRegistry();
-        bountyManager = new BountyManager(address(reviewRegistry));
+        bountyManager = new BountyManager(address(reviewRegistry), address(50000));
     }
 
 
     function test_RevertCondition() public {
         // Test a condition that should revert
         vm.expectRevert();
-        bountyManager.someFunctionThatShouldRevert();
+        bountyManager.claimBounty(0);
     }
 
     function test_CreateBounty() public payable {

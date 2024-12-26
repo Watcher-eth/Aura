@@ -67,7 +67,7 @@ contract BountyManager {
         bool hasReviewed = false;
         uint256 totalReviews = reviewRegistry.getTotalReviews();
         for (uint256 i = 0; i < totalReviews; i++) {
-            (string memory metadataURI, address contractAddress,, address createdBy, ) = getReviewDetails(i);
+            (, address contractAddress,, address createdBy, ) = getReviewDetails(i);
             if (contractAddress == bounty.contractAddress && createdBy == msg.sender) {
                 hasReviewed = true;
                 break;
@@ -89,8 +89,14 @@ contract BountyManager {
 
         // Transfer the reward
         require(address(this).balance >= rewardShare, "Insufficient bounty pool");
-        payable(msg.sender).transfer(netReward);
-        payable(feeAddress).transfer(platformFee);
+        
+        // Transfer net reward to claimer
+        (bool successClaimer, ) = payable(msg.sender).call{value: netReward}("");
+        require(successClaimer, "Claimer transfer failed");
+        
+        // Transfer platform fee
+        (bool successFee, ) = payable(feeAddress).call{value: platformFee}("");
+        require(successFee, "Fee transfer failed");
 
         emit BountyClaimed(bountyId, msg.sender, netReward, platformFee);
     }
@@ -113,7 +119,8 @@ contract BountyManager {
         // Implement access control as needed (e.g., onlyOwner)
         require(to != address(0), "Invalid address");
         require(amount <= address(this).balance, "Insufficient balance");
-        to.transfer(amount);
+        (bool success, ) = to.call{value: amount}("");
+        require(success, "Transfer failed");
     }
 
     // Fallback functions to accept Ether

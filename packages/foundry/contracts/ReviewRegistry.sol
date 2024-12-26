@@ -1,11 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.4;
 
-import "../lib/SSTORE2.sol";
-
 contract ReviewRegistry {
-    using SSTORE2 for bytes;
-
     struct Review {
         string metadataURI;
         address contractAddress;
@@ -14,8 +10,8 @@ contract ReviewRegistry {
         uint8 rating; // 1-5
     }
 
-    // Array of pointers to stored reviews
-    address[] private reviewPointers;
+    // Array to store reviews
+    Review[] private reviews;
 
     event ReviewAdded(uint256 indexed reviewId, address indexed reviewer, address contractName, uint8 rating);
 
@@ -34,35 +30,23 @@ contract ReviewRegistry {
             rating: rating
         });
 
-        // Serialize the review data
-        bytes memory encodedReview = abi.encode(newReview);
+        // Add the review to the array
+        reviews.push(newReview);
 
-        // Store the review using SSTORE2
-        address pointer = SSTORE2.write(encodedReview);
-
-        // Add the pointer to the array
-        reviewPointers.push(pointer);
-
-        emit ReviewAdded(reviewPointers.length - 1, msg.sender, contractAddress, rating);
+        emit ReviewAdded(reviews.length - 1, msg.sender, contractAddress, rating);
     }
 
     /// @notice Retrieves a review by its ID.
     /// @param reviewId The ID of the review to retrieve.
     /// @return Review struct containing the review details.
     function getReview(uint256 reviewId) external view returns (Review memory) {
-        require(reviewId < reviewPointers.length, "Review ID out of bounds");
-
-        address pointer = reviewPointers[reviewId];
-        bytes memory encodedReview = SSTORE2.read(pointer);
-        Review memory review = abi.decode(encodedReview, (Review));
-        return review;
+        require(reviewId < reviews.length, "Review ID out of bounds");
+        return reviews[reviewId];
     }
 
     /// @notice Returns the total number of reviews.
     /// @return The count of reviews.
     function getTotalReviews() external view returns (uint256) {
-        return reviewPointers.length;
+        return reviews.length;
     }
-
-
 }

@@ -6,7 +6,7 @@ import {
 } from "./lib/generated"
 
 export const DEFAULT_CHAIN_ID = 37111
-const DEFAULT_START_BLOCK = 20506690
+const DEFAULT_START_BLOCK = 96734
 const NETWORK_NAME = "lens"
 
 const RPC_URL = "https://rpc.testnet.lens.dev"

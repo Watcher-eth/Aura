@@ -1,23 +1,29 @@
-FROM node:18-bullseye
+FROM node:18-bullseye-slim
 
-# Install Python and build dependencies
-RUN apt-get update && apt-get install -y \
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y \
     python3 \
     python3-pip \
     build-essential \
-    && ln -s /usr/bin/python3 /usr/bin/python
+    git \
+    pkg-config \
+    && ln -s /usr/bin/python3 /usr/bin/python \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
-# Enable and prepare Corepack for Yarn
+# Enable Corepack and set environment variables
+ENV NODE_ENV=production
+ENV PYTHON=/usr/bin/python3
 RUN corepack enable && corepack prepare yarn@stable --activate
 
-# Copy yarn and package files
+# Copy configuration files first
 COPY .yarnrc.yml ./
 COPY package.json ./
 
-# Install dependencies
-RUN yarn install
+# Install dependencies with specific flags for better-sqlite3
+RUN CFLAGS='-DSQLITE_ENABLE_COLUMN_METADATA=1' yarn install --frozen-lockfile
 
 # Copy the rest of the application
 COPY . .

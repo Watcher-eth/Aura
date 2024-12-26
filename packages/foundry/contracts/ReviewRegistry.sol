@@ -21,7 +21,7 @@ contract ReviewRegistry {
 
     /// @notice Adds a new review to the registry.
     /// @param metadataURI URI pointing to the review metadata.
-    /// @param contractName Name of the contract being reviewed.
+    /// @param contractAddress Name of the contract being reviewed.
     /// @param rating Rating between 1 to 5.
     function addReview(string calldata metadataURI, address contractAddress, uint8 rating) external {
         require(rating >= 1 && rating <= 5, "Rating must be between 1 and 5");

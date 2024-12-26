@@ -7,11 +7,15 @@ contract BountyManager {
     ReviewRegistry public reviewRegistry;
 
     struct Bounty {
-        string contractName;
+        address contractAddress;
         uint256 rewardPool;
         uint256 totalClaims;
+        uint256 participants;
         bool active;
     }
+
+    // Fee address for collecting platform fees
+    address public feeAddress;
 
     // Mapping from bounty ID to Bounty
     mapping(uint256 => Bounty) public bounties;
@@ -21,27 +25,32 @@ contract BountyManager {
 
     uint256 public bountyCount;
 
-    event BountyCreated(uint256 indexed bountyId, string contractName, uint256 rewardPool);
-    event BountyClaimed(uint256 indexed bountyId, address indexed claimant, uint256 reward);
+    event BountyCreated(uint256 indexed bountyId, address contractAddress, uint256 rewardPool, uint256 participants);
+    event BountyClaimed(uint256 indexed bountyId, address indexed claimant, uint256 reward, uint256 fee);
 
     /// @param _reviewRegistry Address of the deployed ReviewRegistry contract.
-    constructor(address _reviewRegistry) {
+    /// @param _feeAddress Address to receive platform fees.
+    constructor(address _reviewRegistry, address _feeAddress) {
         reviewRegistry = ReviewRegistry(_reviewRegistry);
+        feeAddress = _feeAddress;
     }
 
     /// @notice Creates a new bounty for a specific contract.
-    /// @param contractName Name of the contract for which the bounty is created.
-    function createBounty(string calldata contractName) external payable {
+    /// @param contractAddress Name of the contract for which the bounty is created.
+    /// @param participants Number of expected participants to divide the bounty.
+    function createBounty(address contractAddress, uint256 participants) external payable {
         require(msg.value > 0, "Reward pool must be greater than zero");
+        require(participants > 0, "Participants must be greater than zero");
 
         bounties[bountyCount] = Bounty({
-            contractName: contractName,
+            contractAddress: contractAddress,
             rewardPool: msg.value,
             totalClaims: 0,
+            participants: participants,
             active: true
         });
 
-        emit BountyCreated(bountyCount, contractName, msg.value);
+        emit BountyCreated(bountyCount, contractAddress, msg.value, participants);
         bountyCount++;
     }
 
@@ -58,8 +67,8 @@ contract BountyManager {
         bool hasReviewed = false;
         uint256 totalReviews = reviewRegistry.getTotalReviews();
         for (uint256 i = 0; i < totalReviews; i++) {
-            (string memory metadataURI, string memory contractName,, address createdBy, ) = getReviewDetails(i);
-            if (keccak256(bytes(contractName)) == keccak256(bytes(bounty.contractName)) && createdBy == msg.sender) {
+            (string memory metadataURI, address contractAddress,, address createdBy, ) = getReviewDetails(i);
+            if (contractAddress == bounty.contractAddress && createdBy == msg.sender) {
                 hasReviewed = true;
                 break;
             }
@@ -70,28 +79,34 @@ contract BountyManager {
         hasClaimed[bountyId][msg.sender] = true;
         bounty.totalClaims++;
 
-        // Calculate reward share (simple division, can be improved)
-        uint256 reward = bounty.rewardPool / 10; // Example: each claim gets 10% of the pool
+        // Calculate reward share
+        uint256 totalRewardPool = bounty.rewardPool;
+        uint256 rewardShare = totalRewardPool / bounty.participants;
+        
+        // Calculate platform fee (2.5%)
+        uint256 platformFee = (rewardShare * 25) / 1000; // 2.5% = 25/1000
+        uint256 netReward = rewardShare - platformFee;
 
         // Transfer the reward
-        require(address(this).balance >= reward, "Insufficient bounty pool");
-        payable(msg.sender).transfer(reward);
+        require(address(this).balance >= rewardShare, "Insufficient bounty pool");
+        payable(msg.sender).transfer(netReward);
+        payable(feeAddress).transfer(platformFee);
 
-        emit BountyClaimed(bountyId, msg.sender, reward);
+        emit BountyClaimed(bountyId, msg.sender, netReward, platformFee);
     }
 
     /// @dev Internal function to fetch review details from the ReviewRegistry.
     /// @param reviewId The ID of the review to fetch.
-    /// @return metadataURI, contractName, createdAt, createdBy, rating
+    /// @return metadataURI, contractAddress, createdAt, createdBy, rating
     function getReviewDetails(uint256 reviewId) internal view returns (
         string memory metadataURI,
-        string memory contractName,
+        address contractAddress,
         uint256 createdAt,
         address createdBy,
         uint8 rating
     ) {
         ReviewRegistry.Review memory review = reviewRegistry.getReview(reviewId);
-        return (review.metadataURI, review.contractName, review.createdAt, review.createdBy, review.rating);
+        return (review.metadataURI, review.contractAddress, review.createdAt, review.createdBy, review.rating);
     }
 
     /// @notice Allows the contract owner to withdraw any remaining funds.

@@ -3,7 +3,7 @@ import { foundry, react } from "@wagmi/cli/plugins"
 import fs from "fs"
 import path from "path"
 import { Address } from "viem"
-import { BASE_SEPOLIA_CHAIN_ID, BASE_CHAIN_ID } from "./consts"
+import { LENS_SEPOLIA_CHAIN_ID, LENS_CHAIN_ID  } from "./consts"
 
 interface Deployments {
     ReviewRegistry?: Address | Record<number, Address>
@@ -16,7 +16,7 @@ function getFoundryDeployments(): Deployments {
 
     const deployments: Deployments = {}
 
-    const chainIds = [BASE_SEPOLIA_CHAIN_ID, BASE_CHAIN_ID] // Handle both chain IDs
+    const chainIds = [LENS_SEPOLIA_CHAIN_ID, LENS_CHAIN_ID] // Handle both chain IDs
 
     deploymentFiles.forEach((file) => {
         chainIds.forEach((chainId) => {

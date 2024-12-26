@@ -1,2 +1,2 @@
-export const BASE_SEPOLIA_CHAIN_ID = "84532"
-export const BASE_CHAIN_ID = "8453"
+export const LENS_SEPOLIA_CHAIN_ID = "3711137111"
+export const LENS_CHAIN_ID = "300"

@@ -9,8 +9,6 @@ contract DeployContracts is Script {
     function setUp() public {}
 
     function run() public {
-        vmExt.zkVm(true);
-
         uint256 privateKey = vm.envUint("PK");
         address deployer = vm.addr(privateKey);
         vm.startBroadcast(privateKey);
@@ -30,7 +28,5 @@ contract DeployContracts is Script {
         // console.log("Fee address set to:", deployer);
 
         vm.stopBroadcast();
-        vmExt.zkVm(false);
-
     }
 }

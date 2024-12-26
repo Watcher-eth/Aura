@@ -17,13 +17,16 @@
     "lint": "make lint",
     "test": "forge test",
     "verify": "make build-and-verify RPC_URL=${1:-localhost}",
-    "verify-keystore": "make verify-keystore"
+    "verify-keystore": "make verify-keystore",
+    "update-abi-names": "node updateAbiNames.js"
   },
   "dependencies": {
     "@wagmi/cli": "^2.1.22",
     "dotenv": "~16.3.1",
     "envfile": "~6.18.0",
     "ethers": "~5.7.1",
+    "fs": "^0.0.1-security",
+    "path": "^0.12.7",
     "prettier": "~2.8.8",
     "qrcode": "~1.5.3",
     "toml": "~3.0.0",

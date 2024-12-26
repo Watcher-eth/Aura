@@ -9,14 +9,17 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
+# Install yarn
+RUN npm install -g yarn
+
 # Copy package files
 COPY package.json ./
 
 # Install dependencies
-RUN npm install
+RUN yarn install
 
 # Copy the rest of the application
 COPY . .
 
 # Start the application
-CMD ["npm", "run", "start"]
+CMD ["yarn", "ponder:start"]

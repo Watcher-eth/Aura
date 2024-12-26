@@ -10,17 +10,13 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /app
 
 # Copy package files
-COPY package*.json ./
-COPY yarn.lock ./
+COPY package.json ./
 
 # Install dependencies
-RUN yarn install
+RUN npm install
 
 # Copy the rest of the application
 COPY . .
 
-# Build the application
-RUN yarn build
-
 # Start the application
-CMD ["yarn", "start"]
+CMD ["npm", "run", "start"]

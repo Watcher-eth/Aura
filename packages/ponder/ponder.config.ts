@@ -14,7 +14,7 @@ export const NETWORK_NAME = "base" //DEFAULT_CHAIN.network //"baseSepolia"
 export const DEFAULT_CHAIN_ID = 37111
 
 
-const DEFAULT_START_BLOCK = 20506690 //15302654 // 13937650 //9097600 //12000000
+const DEFAULT_START_BLOCK = 96734 //15302654 // 13937650 //9097600 //12000000
 //9097620 //11230080 // 11230082
 
 const BASE_RPC_URL =
@@ -50,11 +50,11 @@ export default createConfig({
       network: NETWORK_NAME,
       startBlock: DEFAULT_START_BLOCK,
     },
-  BountyRegistry: {
+    BountyManager: {
       abi: BountyManagerConfig.abi,
       address: BountyManagerConfig.address[DEFAULT_CHAIN_ID],
       network: NETWORK_NAME,
       startBlock: DEFAULT_START_BLOCK,
-    }
+    },
   },
 })

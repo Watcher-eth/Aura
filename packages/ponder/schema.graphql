@@ -1,0 +1,29 @@
+type Reviews @entity {
+  id: String!
+  metadataURI: String!
+  createdBy: String!
+  contractAddress: String!
+  rating: Int!
+  createdAt: Int!
+}
+
+type Bounties @entity {
+  id: String!
+  contractAddress: String!
+  rewardPool: BigInt!
+  createdAt: Int!
+  totalClaims: Int!
+  updatedAt: Int!
+  active: Boolean!
+}
+
+type BountyClaim @entity {
+  id: String!
+  bountyId: BigInt!
+  claimant: String!
+  reward: BigInt!
+  fee: BigInt!
+  timestamp: Int!
+  blockNumber: Int!
+  transactionHash: String!
+}

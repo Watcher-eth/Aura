@@ -2,6 +2,13 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+@font-face {
+  font-family: 'Rawbeat';
+  src: url('/Rawbeat.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 :root,
 [data-theme] {
   background: oklch(var(--b2));
@@ -21,4 +28,21 @@ h4 {
 
 p {
   margin: 1rem 0;
+}
+
+
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(5px, -5px) rotate(1deg);
+  }
+  75% {
+    transform: translate(-5px, 5px) rotate(-1deg);
+  }
+}
+
+.gentle-float {
+  animation: gentleFloat 6s ease-in-out infinite;
 }

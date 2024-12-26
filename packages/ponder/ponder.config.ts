@@ -1,30 +1,60 @@
-import { createConfig } from "@ponder/core";
-import { http } from "viem";
-import deployedContracts from "../nextjs/contracts/deployedContracts";
-import scaffoldConfig from "../nextjs/scaffold.config";
+import { createConfig } from "@ponder/core"
+import { loadBalance } from "@ponder/utils"
+import { http, parseAbiItem } from "viem"
 
-const targetNetwork = scaffoldConfig.targetNetworks[0];
 
-const networks = {
-  [targetNetwork.name]: {
-    chainId: targetNetwork.id,
-    transport: http(process.env[`PONDER_RPC_URL_${targetNetwork.id}`]),
-  },
-};
 
-const contractNames = Object.keys(deployedContracts[targetNetwork.id]);
+import {
+  ReviewRegistryConfig, BountyManagerConfig} from "./lib/generated"
 
-const contracts = Object.fromEntries(contractNames.map((contractName) => {
-  return [contractName, {
-    network: targetNetwork.name as string,
-    abi: deployedContracts[targetNetwork.id][contractName].abi,
-    address: deployedContracts[targetNetwork.id][contractName].address,
-    startBlock: deployedContracts[targetNetwork.id][contractName].startBlock || 0,
-  }];
-}));
+  import { chains } from "@lens-network/sdk/viem";
 
+export const DEFAULT_CHAIN = chains.testnet// baseSepolia
+export const NETWORK_NAME = "base" //DEFAULT_CHAIN.network //"baseSepolia"
+export const DEFAULT_CHAIN_ID = 37111
+
+
+const DEFAULT_START_BLOCK = 20506690 //15302654 // 13937650 //9097600 //12000000
+//9097620 //11230080 // 11230082
+
+const BASE_RPC_URL =
+  "https://base-mainnet.g.alchemy.com/v2/zBh4KLxjpr1p3LncaGuHwgOA_X3J0b5F"
+  // "https://base-sepolia.g.alchemy.com/v2/uoulk1rWzqeAL3tHK_QSEuNqiqb4l3xd"
+
+
+
+//"https://base-sepolia.g.alchemy.com/v2/zBh4KLxjpr1p3LncaGuHwgOA_X3J0b5F"
 export default createConfig({
-  networks: networks,
-  contracts: contracts,
-});
-
+  networks: {
+    [NETWORK_NAME]: {
+      chainId: DEFAULT_CHAIN_ID,
+      transport: http(BASE_RPC_URL),
+      // Swap existing transport for the below when we have more than one RPC
+      // to loadBalance btwn
+      // loadBalance([
+      //   http(BASE_RPC_URL)
+      // ])
+    },
+  },
+  blocks: {
+    LpPositionUpdate: {
+      network: NETWORK_NAME,
+      startBlock: DEFAULT_START_BLOCK,
+      interval: 240, // 60 //60 / 12, // Every 60 seconds
+    },
+  },
+  contracts: {
+    ReviewRegistry: {
+      abi: ReviewRegistryConfig.abi,
+      address: ReviewRegistryConfig.address[DEFAULT_CHAIN_ID],
+      network: NETWORK_NAME,
+      startBlock: DEFAULT_START_BLOCK,
+    },
+  BountyRegistry: {
+      abi: BountyManagerConfig.abi,
+      address: BountyManagerConfig.address[DEFAULT_CHAIN_ID],
+      network: NETWORK_NAME,
+      startBlock: DEFAULT_START_BLOCK,
+    }
+  },
+})

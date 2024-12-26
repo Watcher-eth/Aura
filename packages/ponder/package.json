@@ -11,6 +11,7 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@lens-network/sdk": "canary",
     "@ponder/core": "^0.4.28",
     "viem": "^1.19.9"
   },

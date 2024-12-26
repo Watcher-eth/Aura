@@ -1,0 +1,170 @@
+type Query {
+  reviews(id: String!): Reviews
+  reviewss(where: ReviewsFilter, orderBy: String, orderDirection: String, before: String, after: String, limit: Int): ReviewsPage!
+  bounties(id: String!): Bounties
+  bountiess(where: BountiesFilter, orderBy: String, orderDirection: String, before: String, after: String, limit: Int): BountiesPage!
+  _meta: _meta
+}
+
+type Reviews {
+  id: String!
+  metadataURI: String!
+  contractAddress: String!
+  createdAt: Int!
+  createdBy: String!
+  rating: Int!
+}
+
+type ReviewsPage {
+  items: [Reviews!]!
+  pageInfo: PageInfo!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
+input ReviewsFilter {
+  AND: [ReviewsFilter]
+  OR: [ReviewsFilter]
+  id: String
+  id_not: String
+  id_in: [String]
+  id_not_in: [String]
+  id_contains: String
+  id_not_contains: String
+  id_starts_with: String
+  id_ends_with: String
+  id_not_starts_with: String
+  id_not_ends_with: String
+  metadataURI: String
+  metadataURI_not: String
+  metadataURI_in: [String]
+  metadataURI_not_in: [String]
+  metadataURI_contains: String
+  metadataURI_not_contains: String
+  metadataURI_starts_with: String
+  metadataURI_ends_with: String
+  metadataURI_not_starts_with: String
+  metadataURI_not_ends_with: String
+  contractAddress: String
+  contractAddress_not: String
+  contractAddress_in: [String]
+  contractAddress_not_in: [String]
+  contractAddress_gt: String
+  contractAddress_lt: String
+  contractAddress_gte: String
+  contractAddress_lte: String
+  createdAt: Int
+  createdAt_not: Int
+  createdAt_in: [Int]
+  createdAt_not_in: [Int]
+  createdAt_gt: Int
+  createdAt_lt: Int
+  createdAt_gte: Int
+  createdAt_lte: Int
+  createdBy: String
+  createdBy_not: String
+  createdBy_in: [String]
+  createdBy_not_in: [String]
+  createdBy_gt: String
+  createdBy_lt: String
+  createdBy_gte: String
+  createdBy_lte: String
+  rating: Int
+  rating_not: Int
+  rating_in: [Int]
+  rating_not_in: [Int]
+  rating_gt: Int
+  rating_lt: Int
+  rating_gte: Int
+  rating_lte: Int
+}
+
+type Bounties {
+  id: String!
+  contractAddress: String!
+  rewardPool: BigInt!
+  totalClaims: Int!
+  active: Boolean!
+  createdAt: Int!
+  updatedAt: Int!
+}
+
+scalar BigInt
+
+type BountiesPage {
+  items: [Bounties!]!
+  pageInfo: PageInfo!
+}
+
+input BountiesFilter {
+  AND: [BountiesFilter]
+  OR: [BountiesFilter]
+  id: String
+  id_not: String
+  id_in: [String]
+  id_not_in: [String]
+  id_contains: String
+  id_not_contains: String
+  id_starts_with: String
+  id_ends_with: String
+  id_not_starts_with: String
+  id_not_ends_with: String
+  contractAddress: String
+  contractAddress_not: String
+  contractAddress_in: [String]
+  contractAddress_not_in: [String]
+  contractAddress_gt: String
+  contractAddress_lt: String
+  contractAddress_gte: String
+  contractAddress_lte: String
+  rewardPool: BigInt
+  rewardPool_not: BigInt
+  rewardPool_in: [BigInt]
+  rewardPool_not_in: [BigInt]
+  rewardPool_gt: BigInt
+  rewardPool_lt: BigInt
+  rewardPool_gte: BigInt
+  rewardPool_lte: BigInt
+  totalClaims: Int
+  totalClaims_not: Int
+  totalClaims_in: [Int]
+  totalClaims_not_in: [Int]
+  totalClaims_gt: Int
+  totalClaims_lt: Int
+  totalClaims_gte: Int
+  totalClaims_lte: Int
+  active: Boolean
+  active_not: Boolean
+  active_in: [Boolean]
+  active_not_in: [Boolean]
+  createdAt: Int
+  createdAt_not: Int
+  createdAt_in: [Int]
+  createdAt_not_in: [Int]
+  createdAt_gt: Int
+  createdAt_lt: Int
+  createdAt_gte: Int
+  createdAt_lte: Int
+  updatedAt: Int
+  updatedAt_not: Int
+  updatedAt_in: [Int]
+  updatedAt_not_in: [Int]
+  updatedAt_gt: Int
+  updatedAt_lt: Int
+  updatedAt_gte: Int
+  updatedAt_lte: Int
+}
+
+type _meta {
+  status: JSON
+}
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON

@@ -9,8 +9,8 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /app
 
-# Install yarn
-RUN npm install -g yarn
+# Enable and prepare Corepack for Yarn
+RUN corepack enable && corepack prepare yarn@stable --activate
 
 # Copy package files
 COPY package.json ./

@@ -1,6 +1,6 @@
 import { CodegenConfig } from "@graphql-codegen/cli"
 
-const GRAPH_ENDPOINT_URL = "https://aura.up.railway.app"
+const GRAPH_ENDPOINT_URL = "https://aura-production-c3e7.up.railway.app"
 
 const config: CodegenConfig = {
   schema: GRAPH_ENDPOINT_URL,

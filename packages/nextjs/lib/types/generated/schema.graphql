@@ -1,24 +1,9 @@
-type Query {
-  reviews(id: String!): Reviews
-  reviewss(where: ReviewsFilter, orderBy: String, orderDirection: String, before: String, after: String, limit: Int): ReviewsPage!
-  bounties(id: String!): Bounties
-  bountiess(where: BountiesFilter, orderBy: String, orderDirection: String, before: String, after: String, limit: Int): BountiesPage!
-  _meta: _meta
-}
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
 
-type Reviews {
-  id: String!
-  metadataURI: String!
-  contractAddress: String!
-  createdAt: Int!
-  createdBy: String!
-  rating: Int!
-}
-
-type ReviewsPage {
-  items: [Reviews!]!
-  pageInfo: PageInfo!
-}
+scalar BigInt
 
 type PageInfo {
   hasNextPage: Boolean!
@@ -27,9 +12,36 @@ type PageInfo {
   endCursor: String
 }
 
-input ReviewsFilter {
-  AND: [ReviewsFilter]
-  OR: [ReviewsFilter]
+type Meta {
+  status: JSON
+}
+
+type Query {
+  review(id: String!): review
+  reviews(where: reviewFilter, orderBy: String, orderDirection: String, before: String, after: String, limit: Int): reviewPage!
+  bounty(id: String!): bounty
+  bountys(where: bountyFilter, orderBy: String, orderDirection: String, before: String, after: String, limit: Int): bountyPage!
+  _meta: Meta
+}
+
+type review {
+  id: String!
+  metadataURI: String!
+  contractAddress: String!
+  createdAt: Int!
+  createdBy: String!
+  rating: Int!
+}
+
+type reviewPage {
+  items: [review!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input reviewFilter {
+  AND: [reviewFilter]
+  OR: [reviewFilter]
   id: String
   id_not: String
   id_in: [String]
@@ -54,10 +66,12 @@ input ReviewsFilter {
   contractAddress_not: String
   contractAddress_in: [String]
   contractAddress_not_in: [String]
-  contractAddress_gt: String
-  contractAddress_lt: String
-  contractAddress_gte: String
-  contractAddress_lte: String
+  contractAddress_contains: String
+  contractAddress_not_contains: String
+  contractAddress_starts_with: String
+  contractAddress_ends_with: String
+  contractAddress_not_starts_with: String
+  contractAddress_not_ends_with: String
   createdAt: Int
   createdAt_not: Int
   createdAt_in: [Int]
@@ -70,10 +84,12 @@ input ReviewsFilter {
   createdBy_not: String
   createdBy_in: [String]
   createdBy_not_in: [String]
-  createdBy_gt: String
-  createdBy_lt: String
-  createdBy_gte: String
-  createdBy_lte: String
+  createdBy_contains: String
+  createdBy_not_contains: String
+  createdBy_starts_with: String
+  createdBy_ends_with: String
+  createdBy_not_starts_with: String
+  createdBy_not_ends_with: String
   rating: Int
   rating_not: Int
   rating_in: [Int]
@@ -84,7 +100,7 @@ input ReviewsFilter {
   rating_lte: Int
 }
 
-type Bounties {
+type bounty {
   id: String!
   contractAddress: String!
   rewardPool: BigInt!
@@ -94,16 +110,15 @@ type Bounties {
   updatedAt: Int!
 }
 
-scalar BigInt
-
-type BountiesPage {
-  items: [Bounties!]!
+type bountyPage {
+  items: [bounty!]!
   pageInfo: PageInfo!
+  totalCount: Int!
 }
 
-input BountiesFilter {
-  AND: [BountiesFilter]
-  OR: [BountiesFilter]
+input bountyFilter {
+  AND: [bountyFilter]
+  OR: [bountyFilter]
   id: String
   id_not: String
   id_in: [String]
@@ -118,10 +133,12 @@ input BountiesFilter {
   contractAddress_not: String
   contractAddress_in: [String]
   contractAddress_not_in: [String]
-  contractAddress_gt: String
-  contractAddress_lt: String
-  contractAddress_gte: String
-  contractAddress_lte: String
+  contractAddress_contains: String
+  contractAddress_not_contains: String
+  contractAddress_starts_with: String
+  contractAddress_ends_with: String
+  contractAddress_not_starts_with: String
+  contractAddress_not_ends_with: String
   rewardPool: BigInt
   rewardPool_not: BigInt
   rewardPool_in: [BigInt]
@@ -159,12 +176,3 @@ input BountiesFilter {
   updatedAt_gte: Int
   updatedAt_lte: Int
 }
-
-type _meta {
-  status: JSON
-}
-
-"""
-The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
-"""
-scalar JSON

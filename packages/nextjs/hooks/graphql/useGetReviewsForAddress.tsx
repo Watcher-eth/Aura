@@ -1,57 +1,39 @@
 import { useQuery } from "@apollo/client"
-// import { tgql } from "@/__generated__"
-import { APOLLO_CLIENT} from "../../lib/providers/ApolloProvider"
+import { tgql } from "~~/__generated__"
+import { APOLLO_CLIENT } from "../../lib/providers/ApolloProvider"
 
-// const GET_ONCHAIN_MARKET = tgql(/* GraphQL */ `
-//   query getMarketById($id: BigInt!) {
-//     market(id: $id) {
-//       id
-//       marketId
-//       createdAt
-//       initialProb
-//       liquidityTotal
-//       liquidityBalanceUsdc
-//       outcomeA
-//       outcomeB
-//       outcomeOddsA
-//       outcomeOddsB
-//       outcome
-//       proposedAt
-//       question
-//       cover
-//       operator
-//       proposedOutcome
-//       title
-//       usdcStake
-//       topicId
-//       userAddress
-//       topic {
-//         id
-//         title
-//         description
-//         image
-//       }
-//     }
-//   }
-// `)
+const GET_REVIEWS_FOR_ADDRESS = tgql(/* GraphQL */ `
+  query GetReviewsForAddress($contractAddress: String) {
+    reviews(where: { contractAddress: $contractAddress }) {
+      items {
+        contractAddress
+        createdAt
+        createdBy
+        id
+        metadataURI
+        rating
+      }
+    }
+  }
+`)
 
-// export async function getMarketById(id: string) {
-//   const { data } = await APOLLO_CLIENT.query({
-//     query: GET_ONCHAIN_MARKET,
-//     variables: { id: String(id) },
-//   })
-//   return data?.market
-// }
+export async function getReviewsForAddress(contractAddress: string) {
+  const { data } = await APOLLO_CLIENT.query({
+    query: GET_REVIEWS_FOR_ADDRESS,
+    variables: { contractAddress },
+  })
+  return data?.reviews?.items
+}
 
-// export function useGetMarketById(id: string) {
-//   const { data, loading, error, refetch } = useQuery(GET_ONCHAIN_MARKET, {
-//     variables: { id: String(id) },
-//   })
+export function useGetReviewsForAddress(contractAddress: string) {
+  const { data, loading, error, refetch } = useQuery(GET_REVIEWS_FOR_ADDRESS, {
+    variables: { contractAddress },
+  })
 
-//   return {
-//     market: data?.market,
-//     loading,
-//     error,
-//     refetch,
-//   }
-// }
+  return {
+    reviews: data?.reviews?.items,
+    loading,
+    error,
+    refetch,
+  }
+}

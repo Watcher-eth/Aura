@@ -8,6 +8,8 @@
     "lint": "eslint .",
     "serve": "ponder serve",
     "start": "ponder start",
+    "ponder:start": "ponder start",
+    "ponder:dev": "ponder dev",
     "typecheck": "tsc",
     "postinstall": "node-gyp rebuild",
     "rebuild": "node-gyp rebuild"
@@ -26,6 +28,5 @@
   },
   "engines": {
     "node": ">=18.14"
-    
   }
 }

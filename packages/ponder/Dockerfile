@@ -18,6 +18,9 @@ ENV NODE_ENV=production
 ENV PYTHON=/usr/bin/python3
 RUN corepack enable && corepack prepare yarn@stable --activate
 
+# Create and set permissions for SQLite directory
+RUN mkdir -p .ponder/sqlite && chmod -R 777 .ponder
+
 # Copy configuration files first
 COPY .yarnrc.yml ./
 COPY package.json ./
@@ -27,6 +30,9 @@ RUN CFLAGS='-DSQLITE_ENABLE_COLUMN_METADATA=1' yarn install --frozen-lockfile
 
 # Copy the rest of the application
 COPY . .
+
+# Ensure SQLite directory exists and has proper permissions after copy
+RUN mkdir -p .ponder/sqlite && chmod -R 777 .ponder
 
 # Start the application
 CMD ["yarn", "ponder:start"]

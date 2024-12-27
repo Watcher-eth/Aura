@@ -9,7 +9,9 @@ export const DEFAULT_CHAIN_ID = 37111
 const DEFAULT_START_BLOCK = 96734
 const NETWORK_NAME = "lens"
 
-const RPC_URL = "https://rpc.testnet.lens.dev"
+// Use environment variables with fallbacks
+const RPC_URL = process.env.LENS_RPC_URL || "https://rpc.testnet.lens.dev"
+const PORT = process.env.PORT || 42069
 
 export default createConfig({
   networks: {

@@ -16,6 +16,10 @@ WORKDIR /app
 # Enable Corepack and set environment variables
 ENV NODE_ENV=production
 ENV PYTHON=/usr/bin/python3
+ENV PORT=42069
+ENV LENS_RPC_URL=https://rpc.testnet.lens.dev
+ENV PONDER_RPC_URL_37111=https://rpc.testnet.lens.dev
+
 RUN corepack enable && corepack prepare yarn@stable --activate
 
 # Create and set permissions for SQLite directory
@@ -33,6 +37,9 @@ COPY . .
 
 # Ensure SQLite directory exists and has proper permissions after copy
 RUN mkdir -p .ponder/sqlite && chmod -R 777 .ponder
+
+# Expose the port
+EXPOSE ${PORT}
 
 # Start the application
 CMD ["yarn", "ponder:start"]

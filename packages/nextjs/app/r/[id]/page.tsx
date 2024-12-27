@@ -1,5 +1,6 @@
 import { getContractInfo } from '../../../utils/getContractInfo';
 import ReviewModal from '~~/components/modals/ReviewModal';
+import ReviewPage from '~~/components/review/index';
 
 interface Props {
   params: {

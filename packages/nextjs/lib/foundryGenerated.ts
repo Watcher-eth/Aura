@@ -5,6 +5,104 @@ import {
   createUseWatchContractEvent,
 } from 'wagmi/codegen'
 
+
+export interface StandardContract {
+  id: string;
+  address: string;
+  name: string;
+  symbol: string;
+  type: string;
+  image: string;
+  createdAt: string;
+  description?: string;
+  totalSupply?: string;
+  decimals?: number;
+  owner?: string;
+  implementation?: string;
+  verified?: boolean;
+  deploymentBlock?: number;
+  deploymentTimestamp?: string;
+  lastActivityTimestamp?: string;
+  metadata?: {
+    name?: string;
+    description?: string;
+    image?: string;
+    externalUrl?: string;
+    attributes?: Array<{
+      traitType: string;
+      value: string;
+    }>;
+  };
+  stats?: {
+    holders?: number;
+    transfers?: number;
+    volume?: string;
+  };
+}export interface StandardContract {
+  id: string;
+  address: string;
+  name: string;
+  symbol: string;
+  type: string;
+  image: string;
+  createdAt: string;
+  description?: string;
+  totalSupply?: string;
+  decimals?: number;
+  owner?: string;
+  implementation?: string;
+  verified?: boolean;
+  deploymentBlock?: number;
+  deploymentTimestamp?: string;
+  lastActivityTimestamp?: string;
+  metadata?: {
+    name?: string;
+    description?: string;
+    image?: string;
+    externalUrl?: string;
+    attributes?: Array<{
+      traitType: string;
+      value: string;
+    }>;
+  };
+  stats?: {
+    holders?: number;
+    transfers?: number;
+    volume?: string;
+  };
+}export interface StandardContract {
+  id: string;
+  address: string;
+  name: string;
+  symbol: string;
+  type: string;
+  image: string;
+  createdAt: string;
+  description?: string;
+  totalSupply?: string;
+  decimals?: number;
+  owner?: string;
+  implementation?: string;
+  verified?: boolean;
+  deploymentBlock?: number;
+  deploymentTimestamp?: string;
+  lastActivityTimestamp?: string;
+  metadata?: {
+    name?: string;
+    description?: string;
+    image?: string;
+    externalUrl?: string;
+    attributes?: Array<{
+      traitType: string;
+      value: string;
+    }>;
+  };
+  stats?: {
+    holders?: number;
+    transfers?: number;
+    volume?: string;
+  };
+}
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // BountyManager
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

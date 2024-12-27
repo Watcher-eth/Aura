@@ -89,3 +89,10 @@
     @apply bg-background text-foreground;
   }
 }
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
+
+/* Define the .emoji class to use the emoji font */
+.emoji {
+  font-family: 'Noto Color Emoji', Apple Color Emoji, Segoe UI Emoji, sans-serif;
+}

@@ -2,8 +2,6 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
 
 interface ReviewStepOneProps {
   onNext: () => void;
@@ -27,15 +25,16 @@ const ReviewStepOne: React.FC<ReviewStepOneProps> = ({ onNext }) => {
   const [comment, setComment] = useState("");
 
   return (
-    <div className="mt-4 space-y-4">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="rounded-full bg-gray-900 p-2">
+          <div className="rounded-full bg-white border-[0.15rem] border-[#eeeeee] p-2">
             <svg
               width="20"
               height="20"
               viewBox="0 0 24 24"
               fill="none"
+              color='#ededed'
               xmlns="http://www.w3.org/2000/svg"
             >
               <path
@@ -47,7 +46,7 @@ const ReviewStepOne: React.FC<ReviewStepOneProps> = ({ onNext }) => {
               />
             </svg>
           </div>
-          <h2 className="text-xl font-semibold">Feedback</h2>
+          <h2 className="text-xl text-[#999999] font-semibold">Feedback</h2>
         </div>
       </div>
 
@@ -57,8 +56,8 @@ const ReviewStepOne: React.FC<ReviewStepOneProps> = ({ onNext }) => {
           Your input is valuable in helping us better understand your needs and tailor our service accordingly.
         </p>
       </div>
-
-      <div className="flex justify-center gap-4 py-8">
+<div className='relative'>
+      <div className="flex justify-center gap-10 py-8">
         {emotions.map((emotion, index) => (
           <motion.button
             key={index}
@@ -78,7 +77,7 @@ const ReviewStepOne: React.FC<ReviewStepOneProps> = ({ onNext }) => {
               )}
             </AnimatePresence>
             <motion.div
-              className={`relative z-10 flex h-12 w-12 items-center justify-center rounded-full bg-gray-100 text-2xl
+              className={`relative z-10 flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-[1.6rem]
                 ${selectedEmotion === index ? "bg-white" : ""}`}
               animate={{
                 scale: selectedEmotion === index ? 1.2 : 1,
@@ -92,7 +91,7 @@ const ReviewStepOne: React.FC<ReviewStepOneProps> = ({ onNext }) => {
 
       {selectedEmotion !== null && (
         <motion.div
-          className="flex justify-center"
+          className="flex justify-center absolute left-[41%] z-[20] bottom-0 self-center"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
@@ -101,20 +100,20 @@ const ReviewStepOne: React.FC<ReviewStepOneProps> = ({ onNext }) => {
           </div>
         </motion.div>
       )}
-
+</div>
       <textarea
         placeholder="Add a Comment..."
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        className="min-h-[100px] resize-none"
+        className="min-h-[140px] bg-white border-[0.12rem] border-[#eeeeee] rounded-xl p-2 w-full mt-7 resize-none placeholder:text-[#bbbbbb]"
       />
 
-      <button
-        className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700"
+      <div
+        className="  flex items-center justify-center w-full bg-white border-[0.1rem] border-[#eeeeee]  hover:from-green-600 h-12 hover:to-green-700 text-[#bbbbbb] rounded-sm"
         onClick={onNext}
       >
-        Next Step
-      </button>
+        Submit Review
+      </div>
     </div>
   );
 };

@@ -11,7 +11,7 @@ interface ReviewStepTwoProps {
 
 const ReviewStepTwo: React.FC<ReviewStepTwoProps> = ({ onBack, onSubmit }) => {
   return (
-    <div className="mt-4 space-y-4">
+    <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="rounded-full bg-gray-900 p-2">

@@ -51,10 +51,9 @@ const ReviewStepOne: React.FC<ReviewStepOneProps> = ({ onNext }) => {
       </div>
 
       <div className="text-center">
-        <h2 className="text-2xl font-semibold">How are you feeling?</h2>
-        <p className="mt-2 text-muted-foreground">
-          Your input is valuable in helping us better understand your needs and tailor our service accordingly.
-        </p>
+        <h2 className="text-[2rem] font-semibold">Rate the Aura of </h2>
+        <p className="mt-2 text-muted-foreground text-[1.3rem]">
+        0x16859...49B363d        </p>
       </div>
 <div className='relative'>
       <div className="flex justify-center gap-10 py-8">

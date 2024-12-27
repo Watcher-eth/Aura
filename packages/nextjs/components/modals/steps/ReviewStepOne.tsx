@@ -64,13 +64,13 @@ const ReviewStepOne: React.FC<ReviewStepOneProps> = ({ onNext }) => {
                   />
                 )}
               </AnimatePresence>
-              <div className={`relative z-10 w-full h-full flex items-center justify-center  rounded-xl border-2 bg-[#fcfccfc] ${
+              <div className={`relative z-10 w-full h-full flex flex-col items-center justify-center  rounded-xl border-2 bg-[#fcfccfc] ${
                 selectedEmotion === index ? "bg-transparent border-transparent" : ""
               }`}>
                 <span className="text-4xl">{emotion.emoji}</span>
+                <span className="mt-2 text-[#999999] font-medium">{emotion.label}</span>
               </div>
             </div>
-            <span className="mt-2 text-[#999999] font-medium">{emotion.label}</span>
           </motion.button>
         ))}
       </div>

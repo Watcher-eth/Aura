@@ -28,9 +28,10 @@ RUN mkdir -p .ponder/sqlite && chmod -R 777 .ponder
 # Copy configuration files first
 COPY .yarnrc.yml ./
 COPY package.json ./
+COPY yarn.lock ./
 
 # Install dependencies with specific flags for better-sqlite3
-RUN CFLAGS='-DSQLITE_ENABLE_COLUMN_METADATA=1' yarn install --frozen-lockfile
+RUN CFLAGS='-DSQLITE_ENABLE_COLUMN_METADATA=1' yarn install --immutable --immutable-cache
 
 # Copy the rest of the application
 COPY . .

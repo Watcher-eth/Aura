@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ["python3", "gcc", "pkg-config", "nodejs", "yarn"]
+
+[phases.install]
+cmds = ["yarn install"]
+
+[phases.build]
+cmds = ["yarn build"]
+
+[start]
+cmd = "yarn start --schema $RAILWAY_DEPLOYMENT_ID"

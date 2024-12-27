@@ -11,7 +11,6 @@ const NETWORK_NAME = "lens"
 
 // Use environment variables with fallbacks
 const RPC_URL = process.env.LENS_RPC_URL || "https://rpc.testnet.lens.dev"
-const PORT = process.env.PORT || 42069
 
 export default createConfig({
   networks: {
@@ -34,4 +33,10 @@ export default createConfig({
       startBlock: DEFAULT_START_BLOCK,
     },
   },
+  database: process.env.DATABASE_URL 
+    ? {
+        kind: "postgres",
+        connectionString: process.env.DATABASE_URL,
+      }
+    : undefined,
 })

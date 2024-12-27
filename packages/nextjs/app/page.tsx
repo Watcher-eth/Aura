@@ -14,71 +14,70 @@ const bulbisFont = {
 };
 
 export default function Page() {
-  // Array of emojis to use
-  const emojis = "🔥💸👀⏱️👑🤩📈🚩🚀💣😭💅💌🥵💎".split('');
+  const emojis = "🏦💰🤑💵💸🏧🇺🇸😊🎉💎🎊💫⭐️💰🎈🌟✨💫🔥💲🌈🍾🥂🎰🎁💼💹📈🪙💳🧧🎯🎰🏆".split(" ");
 
   const textOptions = [
-    { text: "REVIEWS", font: "font-['Rawbeat']" },
-    { text: "AURA", font: "font-['TheOvercook']" },
-    { text: "HUMANS", font: "font-['Rawbeat']" },
-    { text: "VIBE CHECKS", font: "font-['BulbisDemo']" },
+    { text: "REVIEWS", font: "Rawbeat" },
+    { text: "AURA", font: "TheOvercook" },
+    { text: "HUMANS", font: "Rawbeat" },
+    { text: "VIBE CHECKS", font: "BulbisDemo" },
   ];
 
   const [currentTextIndex, setCurrentTextIndex] = useState(0);
+  const [rotationDirection, setRotationDirection] = useState(1);
 
   const cycleText = () => {
-    setCurrentTextIndex((prev) => (prev + 1) % textOptions.length);
+    setCurrentTextIndex((prev) => {
+      setRotationDirection(-rotationDirection);
+      return (prev + 1) % textOptions.length;
+    });
   };
 
-  // Function to generate random position within constraints
-  const generatePosition = (isBottom = false) => {
-    if (isBottom) {
-      return {
-        left: `${Math.random() * 120 - 10}%`,
-        bottom: `${Math.random() * 80 - 40}px`,
-        transform: `rotate(${Math.random() * 360}deg) scale(${0.5 + Math.random() * 1.5})`,
-      };
-    }
-    return {
-      left: `${Math.random() * 120 - 60}px`,
-      top: `${Math.random() * 120 - 10}%`,
+  // Generate emoji positions
+  const generateStrictPositionArray = (count, side) => {
+    return Array.from({ length: count }, (_, i) => {
+      if (side === "left") {
+        return {
+          left: "0px", // Stick to the left edge
+          top: `${Math.random() * 100}vh`, // Randomize along the vertical axis
+        };
+      } else if (side === "right") {
+        return {
+          right: "0px", // Stick to the right edge
+          top: `${Math.random() * 100}vh`, // Randomize along the vertical axis
+        };
+      } else if (side === "bottom") {
+        return {
+          bottom: "0px", // Stick to the bottom edge
+          left: `${Math.random() * 100}vw`, // Randomize along the horizontal axis
+        };
+      }
+    });
+  };
+
+  const leftEmojis = useMemo(() => {
+    return generateStrictPositionArray(30, "left").map((pos, i) => ({
+      emoji: emojis[i % emojis.length],
+      ...pos,
       transform: `rotate(${Math.random() * 360}deg) scale(${0.5 + Math.random() * 1.5})`,
-    };
-  };
+    }));
+  }, [emojis]);
 
-  // Generate arrays of positioned emojis using useMemo
-  const leftEmojis = useMemo(
-    () =>
-      Array(250)
-        .fill(null)
-        .map((_, i) => ({
-          emoji: emojis[i % emojis.length],
-          ...generatePosition(),
-        })),
-    []
-  );
+  const rightEmojis = useMemo(() => {
+    return generateStrictPositionArray(30, "right").map((pos, i) => ({
+      emoji: emojis[i % emojis.length],
+      ...pos,
+      transform: `rotate(${Math.random() * 360}deg) scale(${0.5 + Math.random() * 1.5})`,
+    }));
+  }, [emojis]);
 
-  const rightEmojis = useMemo(
-    () =>
-      Array(200)
-        .fill(null)
-        .map((_, i) => ({
-          emoji: emojis[i % emojis.length],
-          ...generatePosition(),
-        })),
-    []
-  );
-
-  const bottomEmojis = useMemo(
-    () =>
-      Array(350)
-        .fill(null)
-        .map((_, i) => ({
-          emoji: emojis[i % emojis.length],
-          ...generatePosition(true),
-        })),
-    []
-  );
+  const bottomEmojis = useMemo(() => {
+    return generateStrictPositionArray(50, "bottom").map((pos, i) => ({
+      emoji: emojis[i % emojis.length],
+      ...pos,
+      transform: `rotate(${Math.random() * 360}deg) scale(${0.5 + Math.random() * 1.5})`,
+    }));
+  }, [emojis]);
 
   return (
     <div className="relative min-h-screen h-screen bg-white overflow-hidden">
@@ -99,20 +98,16 @@ export default function Page() {
         }}
       />
       
-      {/* Left Border */}
-      <div className="fixed left-0 top-0 z-[10] bottom-0 w-32 overflow-hidden pointer-events-none">
+   {/* Left Border */}
+   <div className="absolute left-0 top-0 z-[10] bottom-0 w-[50px] pointer-events-none">
         {leftEmojis.map((item, i) => (
           <span
             key={`left-${i}`}
-            className={`absolute text-4xl `} // Use the global 'emoji' class
+            className="absolute text-3xl"
             style={{
-              left: item.left,
-              top: item.top,
-              transform: item.transform,
+              ...item,
               zIndex: Math.floor(Math.random() * 30),
               opacity: 0.7 + Math.random() * 0.3,
-              fontFamily: "'Noto Color Emoji', Apple Color Emoji, Segoe UI Emoji, sans-serif", // Inline font
-
             }}
           >
             {item.emoji}
@@ -121,19 +116,15 @@ export default function Page() {
       </div>
 
       {/* Right Border */}
-      <div className="fixed right-0 z-[10] top-0 bottom-0 w-32 overflow-hidden pointer-events-none">
+      <div className="absolute right-0 top-0 z-[10] bottom-0 w-[50px] pointer-events-none">
         {rightEmojis.map((item, i) => (
           <span
             key={`right-${i}`}
-            className={`absolute text-4xl emoji`} // Use the global 'emoji' class
+            className="absolute text-3xl"
             style={{
-              right: item.left,
-              top: item.top,
-              transform: item.transform,
+              ...item,
               zIndex: Math.floor(Math.random() * 30),
               opacity: 0.7 + Math.random() * 0.3,
-              fontFamily: "'Noto Color Emoji', Apple Color Emoji, Segoe UI Emoji, sans-serif", // Inline font
-
             }}
           >
             {item.emoji}
@@ -142,28 +133,24 @@ export default function Page() {
       </div>
 
       {/* Bottom Border */}
-      <div className="fixed bottom-0 z-[10] left-0 right-0 h-48 overflow-hidden pointer-events-none">
+      <div className="absolute bottom-0 z-[10] left-0 right-0 h-[10px] pointer-events-none">
         {bottomEmojis.map((item, i) => (
           <span
             key={`bottom-${i}`}
-            className={`absolute text-4xl emoji`} // Use the global 'emoji' class
+            className="absolute text-3xl"
             style={{
-              left: item.left,
-              bottom: item.bottom,
-              transform: item.transform,
+              ...item,
               zIndex: Math.floor(Math.random() * 30),
               opacity: 0.7 + Math.random() * 0.3,
-              fontFamily: "'Noto Color Emoji', Apple Color Emoji, Segoe UI Emoji, sans-serif", // Inline font
-
             }}
           >
             {item.emoji}
           </span>
         ))}
       </div>
-
       {/* Bottom gradient overlay */}
       <div className="absolute bottom-0 z-[10] left-0 right-0 h-[15vh] bg-gradient-to-t from-white/90 via-white/50 to-transparent pointer-events-none"></div>
+      {/* <div className="absolute bottom-0 z-[10] left-0 right-0 h-[100vh] bg-gradient-to-t from-white/10  to-transparent pointer-events-none backdrop-blur-md"></div> */}
 
       <div className="relative z-10 min-w-[70vw] container mx-auto px-4 py-8 min-h-screen flex flex-col items-center justify-between">
         {/* Main content */}
@@ -175,7 +162,7 @@ export default function Page() {
               alt="Gradient art"
               width={150}
               height={150}
-              className="rounded-2xl bg-green-200 shadow-lg gentle-float border-4 border-white"
+              className="rounded-[12%] bg-green-200 shadow-lg gentle-float border-[0.3rem] border-white"
             />
           </div>
 
@@ -183,9 +170,9 @@ export default function Page() {
             <img
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQd4yreGyWv2uCtfZ9NiIf6h8bXGdwouv-O2Q&s"
               alt="Easter Island statue"
-              width={150}
-              height={150}
-              className="rounded-2xl bg-white shadow-lg gentle-float border-4 border-white"
+              width={170}
+              height={70}
+              className="rounded-[12%] bg-white shadow-lg gentle-float border-[0.3rem] border-white"
             />
           </div>
 
@@ -193,9 +180,9 @@ export default function Page() {
             <img
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQkqrzNUqdQNE-PfCyyjQMyE1LyCKniZE-BDQ&s"
               alt="Profile avatar"
-              width={120}
-              height={120}
-              className="rounded-full shadow-lg gentle-float border-4 border-white"
+              width={140}
+              height={140}
+              className="rounded-full shadow-lg gentle-float border-[0.3rem] border-white"
             />
           </div>
 
@@ -203,9 +190,9 @@ export default function Page() {
             <img
               src="https://image.typedream.com/cdn-cgi/image/width=384,format=auto,fit=scale-down,quality=100/https://api.typedream.com/v0/document/public/1e17facc-56e9-4158-9522-8cfee85931a9/2VL60YXR4fzAMfLiIYDt95hGVhK_-E_TAwY8_400x400.png"
               alt="Profile avatar"
-              width={120}
-              height={120}
-              className="rounded-full shadow-lg gentle-float border-4 border-white"
+              width={140}
+              height={140}
+              className="rounded-full shadow-lg gentle-float border-[0.3rem] border-white"
             />
           </div>
 
@@ -213,9 +200,9 @@ export default function Page() {
             <img
               src="https://static01.nyt.com/images/2021/03/12/arts/12nft-buyer-1/12nft-notebook-1-mediumSquareAt3X.jpg"
               alt="Flower field"
-              width={150}
-              height={150}
-              className="rounded-2xl shadow-lg gentle-float border-4 border-white"
+              width={180}
+              height={180}
+              className="rounded-[12%] shadow-lg gentle-float border-[0.3rem] border-white"
             />
           </div>
 
@@ -223,17 +210,17 @@ export default function Page() {
             <img
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTWeU4SpfKaB9oGBcJxaiGLZwbQ2nJf0BkmNA&s"
               alt="Abstract art"
-              width={150}
-              height={150}
-              className="rounded-2xl shadow-lg gentle-float border-4 border-white"
+              width={160}
+              height={160}
+              className="rounded-[12%] shadow-lg gentle-float border-[0.3rem] border-white"
             />
           </div>
 
           {/* Main text */}
           <h1 className="text-center text-[80px] font-bold leading-tight mb-16 -mt-20 relative">
             REAL
-            <div className="relative transition-transform duration-300 hover:scale-105 hover:-rotate-2" onClick={cycleText}>
-              <span className={`${textOptions[currentTextIndex].font} transition-transform duration-300 hover:scale-105 hover:-rotate-2 text-[100px] font-[100] bg-gradient-to-r from-blue-400 via-[#FF3366] via-[#FF6633] to-[#FFCC33] text-transparent bg-clip-text cursor-pointer`}>
+            <div className={`relative transition-transform duration-300 hover:scale-105 ${rotationDirection === 1 ? 'rotate-[-4deg]' : 'rotate-[4deg]'}`} onClick={cycleText}>
+              <span className={`transition-transform duration-300 hover:scale-105 text-[100px] font-[100] bg-gradient-to-r from-blue-400 via-[#FF3366] via-[#FF6633] to-[#FFCC33] text-transparent bg-clip-text cursor-pointer`} style={{ fontFamily: textOptions[currentTextIndex].font }}>
                 {textOptions[currentTextIndex].text}
               </span>
               <div className="absolute inset-0 blur-2xl opacity-30 bg-gradient-to-r from-blue-400 via-[#FF3366] via-[#FF6633] to-[#FFCC33]" />
@@ -264,10 +251,12 @@ export default function Page() {
       </div>
       <style jsx global>{`
         @font-face {
-          ${overcookFont}
+          font-family: 'TheOvercook';
+          src: url('/TheOvercook-vmjYM.ttf') format('truetype');
         }
         @font-face {
-          ${bulbisFont}
+          font-family: 'BulbisDemo';
+          src: url('/BulbisDemoOutline-9YL3j.ttf') format('truetype');
         }
       `}</style>
     </div>

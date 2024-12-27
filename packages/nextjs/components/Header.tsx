@@ -96,7 +96,7 @@ export const Header = () => {
           )}
         </div>
         <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-3 rounded-lg shrink-0">
-            <img alt="SE2 logo" className="cursor-pointer  w-12 h-12 rounded-lg"   src="https://media.istockphoto.com/id/1428028070/vector/abstract-background-with-blurry-magenta-and-orange-circular-shape-with-grain-spray-effect.jpg?s=612x612&w=0&k=20&c=jekWiLhrTlbV_b4ltLiKGYrDSilgvn-9H_xLWt4hL4M=" />
+            <img alt="SE2 logo" className="cursor-pointer  w-12 h-12 rounded-full border-4 border-white"   src="https://i.pinimg.com/originals/96/1e/d3/961ed30ec276ddf46ac137130baf5193.jpg" />
           <div className="flex flex-col">
             <span className="font-bold text-[2rem] leading-tight">Aura</span>
 

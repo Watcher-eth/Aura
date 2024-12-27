@@ -71,7 +71,7 @@ export const Header = () => {
   );
 
   return (
-    <div className="sticky lg:static top-0 navbar bg-base-100 min-h-0 flex-shrink-0 justify-between z-20 shadow-md shadow-secondary px-0 sm:px-2">
+    <div className="fixed top-1 w-[99%] navbar min-h-0 flex-shrink-0 justify-between z-50 shadow-md shadow-secondary px-0 sm:px-2   rounded-full mx-3 mt-3">
       <div className="navbar-start w-auto lg:w-1/2">
         <div className="lg:hidden dropdown" ref={burgerMenuRef}>
           <label
@@ -86,7 +86,7 @@ export const Header = () => {
           {isDrawerOpen && (
             <ul
               tabIndex={0}
-              className="menu menu-compact dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
+              className="menu menu-compact dropdown-content mt-3 p-2 py-0 shadow bg-base-100 rounded-box w-52"
               onClick={() => {
                 setIsDrawerOpen(false);
               }}
@@ -96,7 +96,7 @@ export const Header = () => {
           )}
         </div>
         <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-3 rounded-lg shrink-0">
-            <img alt="SE2 logo" className="cursor-pointer  w-14 h-14 rounded-lg"   src="https://media.istockphoto.com/id/1428028070/vector/abstract-background-with-blurry-magenta-and-orange-circular-shape-with-grain-spray-effect.jpg?s=612x612&w=0&k=20&c=jekWiLhrTlbV_b4ltLiKGYrDSilgvn-9H_xLWt4hL4M=" />
+            <img alt="SE2 logo" className="cursor-pointer  w-12 h-12 rounded-lg"   src="https://media.istockphoto.com/id/1428028070/vector/abstract-background-with-blurry-magenta-and-orange-circular-shape-with-grain-spray-effect.jpg?s=612x612&w=0&k=20&c=jekWiLhrTlbV_b4ltLiKGYrDSilgvn-9H_xLWt4hL4M=" />
           <div className="flex flex-col">
             <span className="font-bold text-[2rem] leading-tight">Aura</span>
 

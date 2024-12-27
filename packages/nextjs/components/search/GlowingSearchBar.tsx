@@ -6,8 +6,8 @@ import { cn } from '~~/utils/cn'
 
 export default function GlowingSearch() {
   return (
-    <div className="w-full max-w-md mx-auto min-w-[25vw] ">
-      <div className="relative group">
+    <div className="w-full max-w-md mx-auto min-w-[25vw] hover:scale-102 ">
+      <div className="relative group hover:scale-102">
         <div className="absolute -inset-0.5 rounded-full opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition duration-300 bg-gradient-to-r from-blue-400 via-purple-500 to-orange-400 blur-sm" />
         <div className="relative bg-white rounded-full p-[1px]">
           <div className="relative bg-white rounded-full border border-gray-200 shadow-sm">
@@ -16,7 +16,7 @@ export default function GlowingSearch() {
               type="search"
               placeholder="Search any Contract, Coin or Address..."
               className={cn(
-                "pl-9 bg-white rounded-full",
+                "pl-9 bg-white hover:scale-102 rounded-full",
                 "border-none",
                 "shadow-sm",
                 "focus-visible:ring-0 focus-visible:ring-offset-0",

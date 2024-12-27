@@ -1,13 +1,34 @@
 "use client";
 
-import Image from 'next/image';
-import { FramerIcon as Farcaster, HelpCircle, Instagram } from 'lucide-react';
 import GlowingSearch from '~~/components/search/GlowingSearchBar';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
+
+const overcookFont = {
+  fontFamily: 'TheOvercook',
+  src: `url('/TheOvercook-vmjYM.ttf') format('truetype')`
+};
+
+const bulbisFont = {
+  fontFamily: 'BulbisDemo',
+  src: `url('/BulbisDemoOutline-9YL3j.ttf') format('truetype')`
+};
 
 export default function Page() {
   // Array of emojis to use
   const emojis = "🔥💸👀⏱️👑🤩📈🚩🚀💣😭💅💌🥵💎".split('');
+
+  const textOptions = [
+    { text: "REVIEWS", font: "font-['Rawbeat']" },
+    { text: "AURA", font: "font-['TheOvercook']" },
+    { text: "HUMANS", font: "font-['Rawbeat']" },
+    { text: "VIBE CHECKS", font: "font-['BulbisDemo']" },
+  ];
+
+  const [currentTextIndex, setCurrentTextIndex] = useState(0);
+
+  const cycleText = () => {
+    setCurrentTextIndex((prev) => (prev + 1) % textOptions.length);
+  };
 
   // Function to generate random position within constraints
   const generatePosition = (isBottom = false) => {
@@ -60,7 +81,7 @@ export default function Page() {
   );
 
   return (
-    <div className="relative min-h-screen bg-white overflow-hidden">
+    <div className="relative min-h-screen h-screen bg-white overflow-hidden">
     
 
       {/* Background checkerboard pattern */}
@@ -144,7 +165,7 @@ export default function Page() {
       {/* Bottom gradient overlay */}
       <div className="absolute bottom-0 z-[10] left-0 right-0 h-[15vh] bg-gradient-to-t from-white/90 via-white/50 to-transparent pointer-events-none"></div>
 
-      <div className="relative z-10 min-w-[70vw] container mx-auto px-4 py-8 min-h-[85vh] flex flex-col items-center justify-between">
+      <div className="relative z-10 min-w-[70vw] container mx-auto px-4 py-8 min-h-screen flex flex-col items-center justify-between">
         {/* Main content */}
         <div className="flex-1 flex flex-col items-center justify-center relative w-full mx-auto">
           {/* Floating images - positioned exactly as in screenshot */}
@@ -211,11 +232,11 @@ export default function Page() {
           {/* Main text */}
           <h1 className="text-center text-[80px] font-bold leading-tight mb-16 -mt-20 relative">
             REAL
-            <div className="relative">
-              <span className="font-['Rawbeat'] text-[100px] font-[100] bg-gradient-to-r from-blue-400 via-[#FF3366] via-[#FF6633] to-[#FFCC33] text-transparent bg-clip-text">
-                REVIEWS
+            <div className="relative transition-transform duration-300 hover:scale-105 hover:-rotate-2" onClick={cycleText}>
+              <span className={`${textOptions[currentTextIndex].font} transition-transform duration-300 hover:scale-105 hover:-rotate-2 text-[100px] font-[100] bg-gradient-to-r from-blue-400 via-[#FF3366] via-[#FF6633] to-[#FFCC33] text-transparent bg-clip-text cursor-pointer`}>
+                {textOptions[currentTextIndex].text}
               </span>
-              <div className="absolute inset-0 blur-2xl opacity-40 bg-gradient-to-r from-blue-400 via-[#FF3366] via-[#FF6633] to-[#FFCC33]" />
+              <div className="absolute inset-0 blur-2xl opacity-30 bg-gradient-to-r from-blue-400 via-[#FF3366] via-[#FF6633] to-[#FFCC33]" />
             </div>
             ONCHAIN
           </h1>
@@ -226,21 +247,29 @@ export default function Page() {
 
         {/* Footer */}
         <div className="flex gap-6 text-sm text-gray-500">
-          <a href="#" className="hover:text-gray-900 flex items-center gap-1">
-            <HelpCircle className="w-4 h-4" />
-            Help Center
+          <a href="#" className="hover:text-gray-900 hover:scale-105 flex items-center gap-1">
+          <img src='https://i.ebayimg.com/images/g/-QEAAOSw2~pheAfW/s-l400.jpg' className="w-4 h-4 rounded-full object-cover" />
+            Buy me a Coffee
           </a>
           <a href="#" className="hover:text-gray-900">X</a>
-          <a href="#" className="hover:text-gray-900 flex items-center gap-1">
-            <Instagram className="w-4 h-4" />
-            Instagram
+          <a href="#" className="hover:text-gray-900 hover:scale-105 flex items-center gap-1">
+          <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/1690643591twitter-x-logo-png.webp/1024px-1690643591twitter-x-logo-png.webp.png' className="w-4 h-4 rounded-full object-cover" />
+          Twitter
           </a>
-          <a href="#" className="hover:text-gray-900 flex items-center gap-1">
-            <Farcaster className="w-4 h-4" />
-            Farcaster
+          <a href="#" className="hover:text-gray-900 hover:scale-105 flex items-center gap-1">
+            <img src='https://pbs.twimg.com/profile_images/1856110197418438656/lktVUaQ2_200x200.jpg' className="w-4 h-4 rounded-full object-cover" />
+            Lens
           </a>
         </div>
       </div>
+      <style jsx global>{`
+        @font-face {
+          ${overcookFont}
+        }
+        @font-face {
+          ${bulbisFont}
+        }
+      `}</style>
     </div>
   );
 }

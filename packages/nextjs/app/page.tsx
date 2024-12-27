@@ -150,7 +150,6 @@ export default function Page() {
       </div>
       {/* Bottom gradient overlay */}
       <div className="absolute bottom-0 z-[10] left-0 right-0 h-[15vh] bg-gradient-to-t from-white/90 via-white/50 to-transparent pointer-events-none"></div>
-      {/* <div className="absolute bottom-0 z-[10] left-0 right-0 h-[100vh] bg-gradient-to-t from-white/10  to-transparent pointer-events-none backdrop-blur-md"></div> */}
 
       <div className="relative z-10 min-w-[70vw] container mx-auto px-4 py-8 min-h-screen flex flex-col items-center justify-between">
         {/* Main content */}

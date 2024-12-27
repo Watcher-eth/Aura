@@ -1,4 +1,5 @@
 import { getContractInfo } from '../../../utils/getContractInfo';
+import ReviewModal from '~~/components/modals/ReviewModal';
 
 interface Props {
   params: {
@@ -11,9 +12,18 @@ export default async function ReviewPage({ params }: Props) {
 
   if (!addressInfo) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[70vh]">
+      <div className="flex flex-col items-center justify-center min-h-screen">
         <h1 className="text-[70px] font-bold">Address Not Found</h1>
         <p className="text-gray-600">This contract could not be found.</p>
+        <div className="flex justify-end mt-4">
+          <ReviewModal 
+            trigger={
+              <button className="bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700">
+                Give Feedback
+              </button>
+            }
+          />
+        </div>
       </div>
     );
   }
@@ -53,6 +63,15 @@ export default async function ReviewPage({ params }: Props) {
             <h2 className="font-semibold">Verification Status</h2>
             <p>{addressInfo.verified ? 'Verified ✓' : 'Unverified'}</p>
           </div>
+        </div>
+        <div className="flex justify-end mt-4">
+          <ReviewModal 
+            trigger={
+              <button className="bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700">
+                Give Feedback
+              </button>
+            }
+          />
         </div>
       </div>
     </div>

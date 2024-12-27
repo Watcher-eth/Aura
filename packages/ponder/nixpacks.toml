@@ -1,11 +1,19 @@
 [phases.setup]
-nixPkgs = ["python3", "gcc", "pkg-config", "nodejs", "yarn"]
+nixPkgs = ["python3", "gcc", "pkg-config", "nodejs", "yarn", "python3-pip"]
+aptPkgs = ["python3-dev", "build-essential"]
 
 [phases.install]
-cmds = ["yarn install"]
+cmds = [
+    "python3 -m pip install --upgrade pip",
+    "yarn config set python python3",
+    "yarn install"
+]
 
 [phases.build]
 cmds = ["yarn build"]
 
 [start]
 cmd = "yarn start --schema $RAILWAY_DEPLOYMENT_ID"
+
+[variables]
+PYTHON = "python3"

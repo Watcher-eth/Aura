@@ -1,10 +1,9 @@
 [phases.setup]
-nixPkgs = ["python3", "gcc", "pkg-config", "nodejs", "yarn", "python3-pip"]
+nixPkgs = ["python3", "gcc", "pkg-config", "nodejs", "yarn"]
 aptPkgs = ["python3-dev", "build-essential"]
 
 [phases.install]
 cmds = [
-    "python3 -m pip install --upgrade pip",
     "yarn config set python python3",
     "yarn install"
 ]

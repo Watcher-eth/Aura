@@ -1,7 +1,12 @@
 [build]
 builder = "nixpacks"
+buildCommand = "yarn install && yarn build"
 
 [deploy]
+startCommand = "yarn start --schema $RAILWAY_DEPLOYMENT_ID"
 healthcheckPath = "/ready"
 healthcheckTimeout = 86400
 restartPolicyType = "on_failure"
+
+[build.env]
+PYTHON_VERSION = "3.10"

@@ -1,8 +1,30 @@
 "use client"
 
-import React from 'react';
-import { motion } from "framer-motion";
-import { X } from 'lucide-react';
+import React, { useState } from 'react';
+import { HelpingHand, X } from 'lucide-react';
+import { motion, AnimatePresence } from "framer-motion";
+
+
+interface Emotion {
+  emoji: string;
+  label: string;
+}
+
+const emotions: Emotion[] = [
+  { emoji: "😢", label: "Very Sad" },
+  { emoji: "😔", label: "Sad" },
+  { emoji: "😐", label: "Medium" },
+  { emoji: "🙂", label: "Happy" },
+  { emoji: "😊", label: "Very Happy" },
+];
+
+const emotionGradients = [
+  "from-red-100 via-red-200 to-red-400",      // Very Sad
+  "from-orange-100 via-orange-200 to-orange-400",  // Sad
+  "from-yellow-100 via-yellow-200 to-yellow-400",  // Medium
+  "from-green-100 via-green-200 to-green-400",   // Happy
+  "from-blue-100 via-blue-200 to-blue-400"     // Very Happy
+];
 
 interface ReviewStepTwoProps {
   onBack: () => void;
@@ -10,75 +32,82 @@ interface ReviewStepTwoProps {
 }
 
 const ReviewStepTwo: React.FC<ReviewStepTwoProps> = ({ onBack, onSubmit }) => {
+  const [selectedEmotion, setSelectedEmotion] = useState<number | null>(2);
+  const [comment, setComment] = useState("");
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="rounded-full bg-gray-900 p-2">
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"
-                stroke="white"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+          <div className="rounded-full bg-white border-[0.15rem] border-[#eeeeee] p-2">
+          <HelpingHand className='text-[#999999]'/>
           </div>
-          <h2 className="text-xl font-semibold">Additional Details</h2>
+          <h2 className="text-xl text-[#999999] font-semibold">Feedback</h2>
         </div>
       </div>
 
       <div className="text-center">
-        <h2 className="text-2xl font-semibold">Add Supporting Details</h2>
-        <p className="mt-2 text-muted-foreground">
-          Help us understand your feedback better with specific examples or suggestions.
-        </p>
+        <h2 className="text-[2rem] font-semibold">Rate the Aura of </h2>
+        <p className="mt-2 text-muted-foreground text-[1.3rem]">
+        0x16859...49B363d        </p>
+      </div>
+<div className='relative pb-6 mt-1'>
+      <div className="flex justify-center gap-8 z-[0] py-8">
+        {emotions.map((emotion, index) => (
+          <motion.button
+            key={index}
+            className="relative"
+            onClick={() => setSelectedEmotion(index)}
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            <AnimatePresence>
+              {selectedEmotion === index && (
+                <motion.div
+                  className={`absolute -inset-4 rounded-full bg-gradient-to-b ${emotionGradients[index]}`}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0 }}
+                />
+              )}
+            </AnimatePresence>
+            <motion.div
+              className={`relative z-10 flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-[2rem]
+                ${selectedEmotion === index ? "bg-transparent" : ""}`}
+              animate={{
+                scale: selectedEmotion === index ? 1.45 : 1,
+              }}
+            >
+              {emotion.emoji}
+            </motion.div>
+          </motion.button>
+        ))}
       </div>
 
-      <div className="space-y-4">
-        <div className="rounded-lg border border-gray-200 p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="h-2 w-2 rounded-full bg-green-500"></div>
-            <h3 className="font-medium">What went well?</h3>
-          </div>
-          <textarea
-            className="w-full min-h-[80px] resize-none border-0 bg-transparent p-0 focus:ring-0"
-            placeholder="Share the positive aspects..."
-          />
-        </div>
-
-        <div className="rounded-lg border border-gray-200 p-4">
-          <div className="flex items-center gap-2 mb-2">
-            <div className="h-2 w-2 rounded-full bg-red-500"></div>
-            <h3 className="font-medium">What could be improved?</h3>
-          </div>
-          <textarea
-            className="w-full min-h-[80px] resize-none border-0 bg-transparent p-0 focus:ring-0"
-            placeholder="Share your suggestions..."
-          />
-        </div>
-      </div>
-
-      <div className="flex gap-3">
-        <button
-          onClick={onBack}
-          className="flex-1"
+      {selectedEmotion !== null && (
+        <motion.div
+          className="flex justify-center z-[20] -mt-3 "
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
         >
-          Back
-        </button>
-        <button
-          onClick={onSubmit}
-          className="flex-1 bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700"
-        >
-          Submit Feedback
-        </button>
+          <div className="rounded-full bg-gray-900 px-4 py-1 text-sm text-white">
+            {emotions[selectedEmotion].label}
+          </div>
+        </motion.div>
+      )}
+</div>
+      <textarea
+        placeholder="Add a Comment..."
+        value={comment}
+        onChange={(e) => setComment(e.target.value)}
+        className="min-h-[140px] bg-white border-[0.12rem] border-[#eeeeee] rounded-xl p-2 w-full mt-7 resize-none placeholder:text-[#bbbbbb] active:border-[#cecece]"
+      />
+
+      <div
+        className="  flex items-center justify-center w-full bg-white border-[0.1rem] border-[#eeeeee]  hover:from-green-600 h-12 hover:to-green-700 text-[#bbbbbb] rounded-sm"
+        onClick={onSubmit}
+      >
+        Submit Review
       </div>
     </div>
   );

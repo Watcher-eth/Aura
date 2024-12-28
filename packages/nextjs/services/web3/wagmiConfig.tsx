@@ -4,13 +4,27 @@ import { hardhat, mainnet } from "viem/chains";
 import { createConfig } from "wagmi";
 import scaffoldConfig, { DEFAULT_ALCHEMY_API_KEY } from "~~/scaffold.config";
 import { getAlchemyHttpUrl } from "~~/utils/scaffold-eth";
+import { chains as LensChain } from "@lens-network/sdk/viem";
 
 const { targetNetworks } = scaffoldConfig;
 
-// We always want to have mainnet enabled (ENS resolution, ETH price, etc). But only once.
-export const enabledChains = targetNetworks.find((network: Chain) => network.id === 1)
-  ? targetNetworks
-  : ([...targetNetworks, mainnet] as const);
+// Use LensChain.testnet and set the RPC URL
+const enabledChains = ([
+  {
+    ...LensChain.testnet,
+    rpcUrls: {
+      default: "https://rpc.testnet.lens.dev",
+    },
+    nativeCurrency: {
+      name: "GRASS",
+      symbol: "GRASS",
+      decimals: 18,
+    },
+    iconUrl: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT3ekUwQwFzIM_DFTtHjn-511RtTjdKX9rTwZXPH1ID7u-8bEzaFRgmCX7k3zavbVcqvOc&usqp=CAU", // Replace with actual URL
+  },
+  ...targetNetworks,
+  mainnet,
+] as const)
 
 export const wagmiConfig = createConfig({
   chains: enabledChains,
@@ -28,7 +42,7 @@ export const wagmiConfig = createConfig({
 
     return createClient({
       chain,
-      
+      // transport: http(chain.rpcUrls.default),
       transport: fallback(rpcFallbacks),
       ...(chain.id !== (hardhat as Chain).id
         ? {

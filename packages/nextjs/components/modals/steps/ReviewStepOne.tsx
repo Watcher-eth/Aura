@@ -1,8 +1,9 @@
 "use client"
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import { HelpingHand, Check } from 'lucide-react';
+import { useReview } from '../context/ReviewContext';
 
 interface ReviewStepOneProps {
   onNext: () => void;
@@ -13,24 +14,26 @@ interface Emotion {
   label: string;
 }
 
-const emotions: Emotion[] = [
+export const emotions: Emotion[] = [
   { emoji: "😐", label: "Mid" },
   { emoji: "💎", label: "Gem" },
   { emoji: "🚩", label: "Rug" },
   { emoji: "🔥", label: "Fire" },
   { emoji: "👀", label: "Watching" },
   { emoji: "👑", label: "King" },
-  { emoji: "😐", label: "Mid" },
-  { emoji: "💎", label: "Gem" },
-  { emoji: "🚩", label: "Rug" },
-  { emoji: "😐", label: "Mid" },
-  { emoji: "💎", label: "Gem" },
-  { emoji: "🚩", label: "Rug" },
+  { emoji: "💣", label: "Bomb" },
+  { emoji: "🪫", label: "Low Juice" },
+  { emoji: "🚀", label: "Rocketship" },
+  { emoji: "⭐", label: "Star" },
+  { emoji: "📈", label: "Bullish" },
+  { emoji: "📉", label: "Bearish" },
+  { emoji: "🤡", label: "Clown" },
+  { emoji: "💰", label: "Moonbag" },
+  { emoji: "💸", label: "Airdrop" }
 ];
 
 const ReviewStepOne: React.FC<ReviewStepOneProps> = ({ onNext }) => {
-  const [selectedEmotions, setSelectedEmotions] = useState<number[]>([]);
-  const [comment, setComment] = useState("");
+  const { selectedEmotions, setSelectedEmotions } = useReview();
 
   const handleEmotionClick = (index: number) => {
     setSelectedEmotions(prev => {
@@ -103,7 +106,7 @@ const ReviewStepOne: React.FC<ReviewStepOneProps> = ({ onNext }) => {
             </motion.button>
           ))}
         </div>
-        <div className="absolute mx-4 bottom-[11.5%] z-[10] left-0 right-0 h-[7vh] bg-gradient-to-t from-white via-white/90  to-transparent pointer-events-none"></div>
+        <div className="absolute mx-4 bottom-[12.5%] z-[10] left-0 right-0 h-[7vh] bg-gradient-to-t from-white via-white/90  to-transparent pointer-events-none"></div>
 
       </div>
 

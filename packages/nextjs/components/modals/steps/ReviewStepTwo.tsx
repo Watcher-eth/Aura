@@ -1,8 +1,9 @@
-"use client"
+"use client";
 
 import React, { useState } from 'react';
 import { HelpingHand, X } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
+import { useReview } from '../context/ReviewContext';
 
 
 interface Emotion {
@@ -33,7 +34,16 @@ interface ReviewStepTwoProps {
 
 const ReviewStepTwo: React.FC<ReviewStepTwoProps> = ({ onBack, onSubmit }) => {
   const [selectedEmotion, setSelectedEmotion] = useState<number | null>(2);
-  const [comment, setComment] = useState("");
+  const { selectedEmotions, comment, setComment, submitReview } = useReview();
+
+  const handleSubmit = async () => {
+    try {
+      await submitReview();
+      onSubmit();
+    } catch (error) {
+      console.error('Error submitting review:', error);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -42,12 +52,12 @@ const ReviewStepTwo: React.FC<ReviewStepTwoProps> = ({ onBack, onSubmit }) => {
           <div className="rounded-full bg-white border-[0.15rem] border-[#eeeeee] p-2">
           <HelpingHand className='text-[#999999]'/>
           </div>
-          <h2 className="text-xl text-[#999999] font-semibold">Feedback</h2>
+          <h2 className="text-xl text-[#999999] font-semibold">Leave a Review</h2>
         </div>
       </div>
 
       <div className="text-center">
-        <h2 className="text-[2rem] font-semibold">Rate the Aura of </h2>
+        <h2 className="text-[2rem] font-semibold">How was your experience with</h2>
         <p className="mt-2 text-muted-foreground text-[1.3rem]">
         0x16859...49B363d        </p>
       </div>
@@ -105,7 +115,7 @@ const ReviewStepTwo: React.FC<ReviewStepTwoProps> = ({ onBack, onSubmit }) => {
 
       <div
         className="  flex items-center justify-center w-full bg-white border-[0.1rem] border-[#eeeeee]  hover:from-green-600 h-12 hover:to-green-700 text-[#bbbbbb] rounded-sm"
-        onClick={onSubmit}
+        onClick={handleSubmit}
       >
         Submit Review
       </div>

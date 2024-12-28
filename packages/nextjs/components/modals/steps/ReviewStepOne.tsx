@@ -50,7 +50,7 @@ const ReviewStepOne: React.FC<ReviewStepOneProps> = ({ onNext }) => {
             key={index}
             className="relative flex flex-col items-center"
             onClick={() => setSelectedEmotion(index)}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.015 }}
             whileTap={{ scale: 0.95 }}
           >
             <div className="relative w-full aspect-square">
@@ -67,20 +67,15 @@ const ReviewStepOne: React.FC<ReviewStepOneProps> = ({ onNext }) => {
               <div className={`relative z-10 w-full h-full flex flex-col items-center justify-center  rounded-xl border-2 bg-[#fcfccfc] ${
                 selectedEmotion === index ? "bg-transparent border-transparent" : ""
               }`}>
-                <span className="text-4xl">{emotion.emoji}</span>
-                <span className="mt-2 text-[#999999] font-medium">{emotion.label}</span>
+                <span className="text-[4.5rem]">{emotion.emoji}</span>
+                <span className=" text-[#999999] -mt-1.5 font-medium">{emotion.label}</span>
               </div>
             </div>
           </motion.button>
         ))}
       </div>
 
-      <textarea
-        placeholder="Add a Comment..."
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
-        className="min-h-[140px] bg-white border-[0.12rem] border-[#eeeeee] rounded-xl p-2 w-full mt-7 resize-none placeholder:text-[#bbbbbb] active:border-[#cecece]"
-      />
+    
 
       <div
         className="flex items-center justify-center w-full bg-white border-[0.1rem] border-[#eeeeee] hover:from-green-600 h-12 hover:to-green-700 text-[#bbbbbb] rounded-sm"

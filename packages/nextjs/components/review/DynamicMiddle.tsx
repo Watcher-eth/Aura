@@ -7,8 +7,6 @@ import {
   CarouselPrevious,
 } from "~~/components/ui/carousel";
 import { Card } from "~~/components/ui/card";
-import Image from "next/image";
-import { AspectRatio } from "~~/components/ui/aspect-ratio";
 
 interface DynamicMiddleProps {
   images: string[];
@@ -32,16 +30,14 @@ function DynamicMiddle({ images }: DynamicMiddleProps) {
           {images.map((image, index) => (
             <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
               <Card className="overflow-hidden">
-                <AspectRatio ratio={1}>
-                  <Image
+                <div className="w-full h-0 pb-[100%] relative">
+                  <img
                     src={image}
                     alt={`Review image ${index + 1}`}
-                    fill
-                    className="object-cover rounded-md"
-                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                    priority={index === 0}
+                    className="absolute inset-0 w-full h-full object-cover rounded-md"
+                    loading={index === 0 ? "eager" : "lazy"}
                   />
-                </AspectRatio>
+                </div>
               </Card>
             </CarouselItem>
           ))}

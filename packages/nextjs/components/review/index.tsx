@@ -4,21 +4,10 @@ import DynamicMiddle from './DynamicMiddle';
 import StatsOverview from './StatsOverview';
 import UserReview from './UserReview';
 import { type review } from "~~/lib/types/generated/schema.graphql";
+import { type ContractInfo } from '~~/utils/getContractInfo';
 
-interface ReviewPageProps extends Partial<review> {
-  profilePicture?: string;
-  name: string;
-  username: string;
-  images?: string[];
-  stats?: {
-    totalReviews: number;
-    holders: number;
-    marketCap: string;
-    emojiStats: Array<{
-      emoji: string;
-      count: number;
-    }>;
-  };
+interface ReviewPageProps {
+  contractInfo: ContractInfo;
   reviews?: Array<{
     id: string;
     profilePicture?: string;
@@ -34,45 +23,49 @@ interface ReviewPageProps extends Partial<review> {
 }
 
 function ReviewPage({
-  id,
-  profilePicture,
-  name,
-  username,
-  rating = 0,
-  images = [],
-  stats = {
-    totalReviews: 0,
-    holders: 0,
-    marketCap: "$0",
-    emojiStats: [],
-  },
+  contractInfo,
   reviews = [],
-  contractAddress,
-  createdAt,
-  createdBy,
 }: ReviewPageProps) {
-  const handleReactionToggle = (reviewId: string, emoji: string) => {
-    console.log(`Toggled ${emoji} for review ${reviewId}`);
-    // Implement reaction toggle logic here
+  console.log("contractInfo", contractInfo);
+  
+  const stats = {
+    totalReviews: reviews.length,
+    holders: contractInfo.tokenInfo?.holders || 0,
+    marketCap: contractInfo.tokenInfo?.totalSupply 
+      ? `${parseInt(contractInfo.tokenInfo.totalSupply).toLocaleString()} ${contractInfo.tokenInfo.symbol || ''}`
+      : "N/A",
+    emojiStats: reviews.reduce((acc, review) => {
+      review.reactions.forEach(reaction => {
+        const existing = acc.find(stat => stat.emoji === reaction.emoji);
+        if (existing) {
+          existing.count += reaction.count;
+        } else {
+          acc.push({ emoji: reaction.emoji, count: reaction.count });
+        }
+      });
+      return acc;
+    }, [] as Array<{ emoji: string; count: number }>),
   };
+
+  const averageRating = reviews.length > 0
+    ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+    : 0;
 
   return (
     <div className="container mx-auto px-4 py-8 max-w-6xl">
       <ReviewHeader
-        id={id}
-        profilePicture={profilePicture}
-        name={name}
-        username={username}
-        rating={rating}
-        numberOfRatings={stats.totalReviews}
-        contractAddress={contractAddress}
-        createdAt={createdAt}
-        createdBy={createdBy}
+        name={contractInfo.name || 'Unknown Contract'}
+        username={contractInfo.address}
+        rating={averageRating}
+        numberOfRatings={reviews.length}
+        contractType={contractInfo.contractType}
+        chainName={contractInfo.chainName}
+        verified={contractInfo.verified}
       />
-
-      {images.length > 0 && (
-        <DynamicMiddle images={images} />
-      )}
+      
+      <DynamicMiddle
+        images={[contractInfo.image || 'https://via.placeholder.com/150']}
+      />
 
       <StatsOverview
         totalReviews={stats.totalReviews}
@@ -81,12 +74,11 @@ function ReviewPage({
         emojiStats={stats.emojiStats}
       />
 
-      <div className="space-y-4 mt-6">
+      <div className="mt-8 space-y-6">
         {reviews.map((review) => (
           <UserReview
             key={review.id}
             {...review}
-            onReactionToggle={(emoji) => handleReactionToggle(review.id, emoji)}
           />
         ))}
       </div>
@@ -96,26 +88,13 @@ function ReviewPage({
 
 // Example usage with mock data:
 export const mockReviewPage = {
-  id: "1",
-  profilePicture: "https://example.com/profile.jpg",
-  name: "Ethereum",
-  username: "ethereum",
-  rating: 4.5,
-  images: [
-    "https://example.com/image1.jpg",
-    "https://example.com/image2.jpg",
-    "https://example.com/image3.jpg",
-  ],
-  stats: {
-    totalReviews: 1234,
-    holders: 5678,
-    marketCap: "$1.2B",
-    emojiStats: [
-      { emoji: "👍", count: 789 },
-      { emoji: "❤️", count: 456 },
-      { emoji: "🔥", count: 234 },
-      { emoji: "😊", count: 123 },
-    ],
+  contractInfo: {
+    name: "Ethereum",
+    address: "0x1234567890",
+    contractType: "ERC20",
+    chainName: "Ethereum Mainnet",
+    verified: true,
+    image: "https://example.com/ethereum-logo.png",
   },
   reviews: [
     {

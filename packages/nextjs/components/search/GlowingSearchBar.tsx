@@ -185,7 +185,7 @@ export default function GlowingSearch() {
               <div className="space-y-4 w-full">
                 {searchResults.map((result, index) => (
                   <Link 
-                    href={`/${result.chainId}/${result.address}`} 
+                    href={`/r/${result.address}`} 
                     key={index} 
                     className="block w-full"
                   >

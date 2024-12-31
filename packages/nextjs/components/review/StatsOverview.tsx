@@ -1,83 +1,126 @@
-import React from 'react';
-import { Card, CardContent } from "~~/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+"use client";
 
-interface EmojiStat {
-  emoji: string;
-  count: number;
-}
+import React from 'react';
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { Card } from "~~/components/ui/card";
 
 interface StatsOverviewProps {
   totalReviews: number;
   holders: number;
   marketCap: string;
-  emojiStats: EmojiStat[];
+  emojiStats: Array<{
+    emoji: string;
+    count: number;
+  }>;
 }
 
-const StatCard = ({ title, value, subtitle }: { title: string; value: string | number; subtitle: string }) => (
-  <div className="flex flex-col items-center text-center">
-    <h3 className="text-sm font-medium text-muted-foreground">{title}</h3>
-    <p className="text-2xl font-bold mt-1">{value}</p>
-    <p className="text-xs text-muted-foreground mt-1">{subtitle}</p>
-  </div>
-);
-
-function StatsOverview({ totalReviews, holders, marketCap, emojiStats }: StatsOverviewProps) {
-  // Sort and get top 4 emoji reactions
-  const topEmojis = [...emojiStats]
-    .sort((a, b) => b.count - a.count)
-    .slice(0, 4)
-    .map(stat => ({
-      ...stat,
-      count: stat.count,
-    }));
+export default function StatsOverview({
+  totalReviews = 0,
+  holders = 0,
+  marketCap = "$0",
+  emojiStats = [],
+}: StatsOverviewProps) {
+  const data = emojiStats.map(stat => ({
+    name: stat.emoji,
+    value: stat.count,
+  }));
 
   return (
     <Card className="w-full mt-6">
-      <CardContent className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6">
-        <StatCard
-          title="Total Reviews"
-          value={totalReviews.toLocaleString()}
-          subtitle="are updated hourly"
-        />
-        <StatCard
-          title="Holders"
-          value={holders.toLocaleString()}
-          subtitle="are updated daily"
-        />
-        <StatCard
-          title="Mkt Cap"
-          value={marketCap}
-          subtitle="Updated hourly"
-        />
-        <div className="h-[100px] w-full">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 p-6">
+        <div className="flex flex-col">
+          <span className="text-sm font-medium text-muted-foreground">
+            Total Reviews
+          </span>
+          <span className="text-2xl font-bold">{totalReviews}</span>
+        </div>
+        <div className="flex flex-col">
+          <span className="text-sm font-medium text-muted-foreground">
+            Holders
+          </span>
+          <span className="text-2xl font-bold">{holders.toLocaleString()}</span>
+        </div>
+        <div className="flex flex-col">
+          <span className="text-sm font-medium text-muted-foreground">
+            Market Cap
+          </span>
+          <span className="text-2xl font-bold">{marketCap}</span>
+        </div>
+        <div className="flex flex-col">
+          <span className="text-sm font-medium text-muted-foreground">
+            Reactions
+          </span>
+          <span className="text-2xl font-bold">
+            {emojiStats.reduce((sum, stat) => sum + stat.count, 0)}
+          </span>
+        </div>
+      </div>
+
+      {data.length > 0 && (
+        <div className="h-[200px] w-full p-6">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={topEmojis}>
+            <BarChart data={data}>
+              <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
               <XAxis
-                dataKey="emoji"
-                tick={{ fontSize: 14 }}
-                interval={0}
+                dataKey="name"
+                className="text-sm font-medium"
+                stroke="hsl(var(--foreground))"
+                tickLine={false}
+                axisLine={false}
               />
-              <YAxis hide />
+              <YAxis
+                className="text-sm font-medium"
+                stroke="hsl(var(--foreground))"
+                tickLine={false}
+                axisLine={false}
+                tickFormatter={(value) => `${value}`}
+              />
               <Tooltip
-                contentStyle={{
-                  background: "var(--background)",
-                  border: "1px solid var(--border)",
-                  borderRadius: "6px",
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="rounded-lg border bg-background p-2 shadow-sm">
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="flex flex-col">
+                            <span className="text-[0.70rem] uppercase text-muted-foreground">
+                              Reaction
+                            </span>
+                            <span className="font-bold text-muted-foreground">
+                              {payload[0].payload.name}
+                            </span>
+                          </div>
+                          <div className="flex flex-col">
+                            <span className="text-[0.70rem] uppercase text-muted-foreground">
+                              Count
+                            </span>
+                            <span className="font-bold">
+                              {payload[0].value}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+                  return null;
                 }}
-                cursor={{ fill: "var(--accent)" }}
               />
               <Bar
-                dataKey="count"
-                fill="var(--primary)"
+                dataKey="value"
+                fill="hsl(var(--chart-1))"
                 radius={[4, 4, 0, 0]}
               />
             </BarChart>
           </ResponsiveContainer>
         </div>
-      </CardContent>
+      )}
     </Card>
   );
 }
-
-export default StatsOverview;

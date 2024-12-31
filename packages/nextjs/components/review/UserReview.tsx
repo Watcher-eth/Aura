@@ -1,9 +1,9 @@
+"use client";
 import React, { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "~~/components/ui/avatar";
 import { Card, CardContent } from "~~/components/ui/card";
-import { StarFilledIcon } from "@radix-ui/react-icons";
 import { Button } from "~~/components/ui/button";
-import { type review } from "~~/lib/types/generated/schema.graphql";
+import { Star } from 'lucide-react';
 
 interface Reaction {
   emoji: string;
@@ -11,65 +11,65 @@ interface Reaction {
   selected: boolean;
 }
 
-interface UserReviewProps extends Partial<review> {
+interface UserReviewProps {
   profilePicture?: string;
   name: string;
+  rating: number;
   reviewText: string;
   reactions: Reaction[];
-  onReactionToggle?: (emoji: string) => void;
 }
 
-function UserReview({ 
-  profilePicture, 
-  name, 
-  rating = 0,
+function UserReview({
+  profilePicture,
+  name,
+  rating,
   reviewText,
   reactions,
-  onReactionToggle,
-  id,
-  contractAddress,
-  createdAt,
-  createdBy,
 }: UserReviewProps) {
   const [localReactions, setLocalReactions] = useState(reactions);
 
   const handleReactionClick = (emoji: string) => {
-    setLocalReactions(prev => 
-      prev.map(reaction => 
-        reaction.emoji === emoji 
-          ? { ...reaction, selected: !reaction.selected }
+    setLocalReactions(prev =>
+      prev.map(reaction =>
+        reaction.emoji === emoji
+          ? {
+              ...reaction,
+              selected: !reaction.selected,
+              count: reaction.selected ? reaction.count - 1 : reaction.count + 1,
+            }
           : reaction
       )
     );
-    onReactionToggle?.(emoji);
   };
 
   return (
-    <Card className="w-full mt-4">
+    <Card>
       <CardContent className="p-6">
-        <div className="flex justify-between items-start">
-          <div className="flex items-center space-x-3">
-            <Avatar className="h-10 w-10">
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center space-x-4">
+            <Avatar>
               <AvatarImage src={profilePicture} alt={name} />
-              <AvatarFallback>{name.charAt(0)}</AvatarFallback>
+              <AvatarFallback>{name[0]}</AvatarFallback>
             </Avatar>
-            <span className="font-medium">{name}</span>
-          </div>
-          <div className="flex items-center space-x-1">
-            <StarFilledIcon className="h-5 w-5 text-yellow-400" />
-            <span className="font-medium">{rating}</span>
+            <div>
+              <div className="flex items-center space-x-2">
+                <span className="font-medium">{name}</span>
+              </div>
+              <div className="flex items-center space-x-1">
+                <Star className="h-5 w-5 text-yellow-400" />
+                <span className="font-medium">{rating}</span>
+              </div>
+            </div>
           </div>
         </div>
-        
-        <p className="mt-4 text-muted-foreground">
-          {reviewText}
-        </p>
-        
-        <div className="flex justify-end mt-4 space-x-2">
+
+        <p className="text-muted-foreground mb-4">{reviewText}</p>
+
+        <div className="flex flex-wrap gap-2">
           {localReactions.map((reaction) => (
             <Button
               key={reaction.emoji}
-              variant={reaction.selected ? "default" : "outline"}
+              variant={reaction.selected ? "secondary" : "outline"}
               size="sm"
               onClick={() => handleReactionClick(reaction.emoji)}
               className="space-x-1"

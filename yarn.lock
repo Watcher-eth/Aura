@@ -2627,6 +2627,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@lens-network/sdk@npm:canary":
+  version: 0.0.0-canary-20241203140504
+  resolution: "@lens-network/sdk@npm:0.0.0-canary-20241203140504"
+  peerDependencies:
+    ethers: ^6.12.1
+    viem: ^2.12.0
+    zksync-ethers: ^6.7.1
+  peerDependenciesMeta:
+    ethers:
+      optional: true
+    viem:
+      optional: true
+    zksync-ethers:
+      optional: true
+  checksum: 7c94b667ccd7fc9b4fbb2419936ad63946ab8403cd7636181d1b1adc2b13371f12d8dc6b026631a6752e6e9f9d618bb9278c96fd6f9592412d1c2b0da33bfacf
+  languageName: node
+  linkType: hard
+
 "@lens-protocol/client@canary":
   version: 0.0.0-canary-20241226080441
   resolution: "@lens-protocol/client@npm:0.0.0-canary-20241226080441"
@@ -3967,6 +3985,7 @@ __metadata:
     "@apollo/client": ^3.12.4
     "@graphql-codegen/cli": ^5.0.3
     "@heroicons/react": ~2.1.5
+    "@lens-network/sdk": canary
     "@lens-protocol/client": canary
     "@radix-ui/react-dialog": ^1.1.4
     "@radix-ui/react-slot": ^1.1.1

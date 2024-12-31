@@ -6,6 +6,90 @@ import { cn } from '~~/utils/cn'
 import { useState, useEffect, useCallback } from 'react'
 import { searchContracts, type SearchResult } from '~~/utils/search'
 import { debounce } from 'lodash'
+import Link from 'next/link'
+
+const CHAIN_INFO: { [key: number]: { name: string; icon: string } } = {
+  1: {
+    name: "Ethereum",
+    icon: "https://assets.coingecko.com/coins/images/279/small/ethereum.png",
+  },
+  56: {
+    name: "BNB Smart Chain",
+    icon: "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png",
+  },
+  137: {
+    name: "Polygon",
+    icon: "https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png",
+  },
+  42161: {
+    name: "Arbitrum",
+    icon: "https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg",
+  },
+  10: {
+    name: "Optimism",
+    icon: "https://assets.coingecko.com/coins/images/25244/small/Optimism.png",
+  },
+  43114: {
+    name: "Avalanche",
+    icon: "https://assets.coingecko.com/coins/images/12559/small/Avalanche_Circle_RedWhite_Trans.png",
+  },
+  250: {
+    name: "Fantom",
+    icon: "https://assets.coingecko.com/coins/images/4001/small/Fantom_round.png",
+  },
+  100: {
+    name: "Gnosis",
+    icon: "https://assets.coingecko.com/coins/images/662/small/logo_square_simple_300px.png",
+  },
+  1284: {
+    name: "Moonbeam",
+    icon: "https://assets.coingecko.com/coins/images/22459/small/glmr.png",
+  },
+  1285: {
+    name: "Moonriver",
+    icon: "https://assets.coingecko.com/coins/images/17984/small/9285.png",
+  },
+  25: {
+    name: "Cronos",
+    icon: "https://assets.coingecko.com/coins/images/7310/small/cro_token_logo.png",
+  },
+  42220: {
+    name: "Celo",
+    icon: "https://assets.coingecko.com/coins/images/11090/small/InjXBNx9_400x400.jpg",
+  },
+  1666600000: {
+    name: "Harmony",
+    icon: "https://assets.coingecko.com/coins/images/4344/small/Y88JAze.png",
+  },
+  1088: {
+    name: "Metis",
+    icon: "https://assets.coingecko.com/coins/images/15595/small/metis.PNG",
+  },
+  2222: {
+    name: "Kava",
+    icon: "https://assets.coingecko.com/coins/images/9761/small/kava.png",
+  },
+  1313161554: {
+    name: "Aurora",
+    icon: "https://assets.coingecko.com/coins/images/20582/small/aurora.jpeg",
+  },
+  8217: {
+    name: "Klaytn",
+    icon: "https://assets.coingecko.com/coins/images/9672/small/klaytn.png",
+  },
+  66: {
+    name: "OKX Chain",
+    icon: "https://assets.coingecko.com/markets/images/96/small/WeChat_Image_20220117220452.png",
+  },
+  1101: {
+    name: "Polygon zkEVM",
+    icon: "https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png",
+  },
+  324: {
+    name: "zkSync Era",
+    icon: "https://assets.coingecko.com/coins/images/28137/small/zksync.png",
+  },
+};
 
 export default function GlowingSearch() {
   const [isSearching, setIsSearching] = useState(false)
@@ -92,46 +176,63 @@ export default function GlowingSearch() {
         
         {/* Search results dialog */}
         {(isSearching && searchValue) && (
-          <div className="absolute top-full left-0 min-h-[35vh] right-0 mt-2 bg-white/20 backdrop-blur-lg border-2 border-[#ededed]/40 rounded-lg shadow-lg p-4 max-h-[60vh] overflow-y-auto">
+          <div className="absolute top-full left-0 min-h-[35vh] right-0 mt-2 bg-white/20 backdrop-blur-lg border-2 border-[#ededed]/40 rounded-lg shadow-lg p-4 max-h-[60vh] overflow-y-auto w-full">
             {isLoading ? (
               <div className="flex items-center justify-center py-4">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400"></div>
               </div>
             ) : searchResults.length > 0 ? (
-              <div className="space-y-4">
+              <div className="space-y-4 w-full">
                 {searchResults.map((result, index) => (
-                  <div key={`${result.chainId}-${result.address}`} 
-                       className="flex items-center space-x-4 p-3 rounded-lg hover:bg-white/10 transition-colors">
-                    <div className="flex-shrink-0 w-10 h-10">
-                      {result.imageUrl ? (
-                        <img 
-                          src={result.imageUrl ?? "https://cdn-icons-png.flaticon.com/512/6681/6681925.png"} 
-                          alt={result.name || 'Token'} 
-                          className="w-full h-full rounded-full object-cover"
-                        />
-                      ) : (
-                        <div className="w-full h-full rounded-full bg-gray-200 flex items-center justify-center">
-                          <Search className="w-5 h-5 text-gray-400" />
+                  <Link 
+                    href={`/${result.chainId}/${result.address}`} 
+                    key={index} 
+                    className="block w-full"
+                  >
+                    <div 
+                      key={`${result.chainId}-${result.address}`} 
+                      className="flex items-center space-x-4 p-3 rounded-sm hover:bg-white/10 transition-colors w-full"
+                    >
+                      <div className="flex-shrink-0 w-10 h-10">
+                        {result.imageUrl ? (
+                          <img 
+                            src={result.type === "ERC20"?  "https://cdn-icons-png.flaticon.com/512/6681/6681925.png" : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQX48JYpPPow8zQXp34oKHyqRbECSs1dUpOdw&s"} 
+                            alt={result.name || 'Token'} 
+                            className="w-full h-full rounded-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-200 rounded-full flex items-center justify-center">
+                            <Search className="w-5 h-5 text-gray-400" />
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-medium text-gray-700 truncate">
+                          {result.name || 'Unknown Contract'}
+                        </p>
+                        <p className="text-sm text-gray-500 truncate">
+                          {result.address.slice(0, 6)}...{result.address.slice(-4)}
+                        </p>
+                      </div>
+                      <div className="flex flex-col items-end">
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-500/[12%] border-[0.05rem] border-blue-500 text-blue-500">
+                          {result.type || 'Contract'}
+                        </span>
+                        
+                        <div className="flex items-center space-x-0.5 mt-1">
+                        
+                          <span className="text-xs text-gray-500">
+                            {CHAIN_INFO[result.chainId]?.name || `Chain ${result.chainId}`}
+                          </span>
+                          <img 
+                            src={CHAIN_INFO[result.chainId]?.icon} 
+                            alt={CHAIN_INFO[result.chainId]?.name || 'Chain'} 
+                            className="w-4 h-4 rounded-full"
+                          />
                         </div>
-                      )}
+                      </div>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-gray-700 truncate">
-                        {result.name || 'Unknown Contract'}
-                      </p>
-                      <p className="text-sm text-gray-500 truncate">
-                        {result.address.slice(0, 6)}...{result.address.slice(-4)}
-                      </p>
-                    </div>
-                    <div className="flex flex-col items-end">
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                        {result.type || 'Contract'}
-                      </span>
-                      <span className="text-xs text-gray-500 mt-1">
-                        {result.chainId}
-                      </span>
-                    </div>
-                  </div>
+                  </Link>
                 ))}
               </div>
             ) : (

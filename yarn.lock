@@ -3993,6 +3993,7 @@ __metadata:
     "@shadcn/ui": ^0.0.4
     "@tanstack/react-query": ~5.59.15
     "@trivago/prettier-plugin-sort-imports": ~4.3.0
+    "@types/lodash": ^4
     "@types/node": ~18.19.50
     "@types/react": ~18.3.5
     "@typescript-eslint/eslint-plugin": ~5.40.0
@@ -4012,6 +4013,7 @@ __metadata:
     eslint-plugin-prettier: ~5.2.1
     graphql: ^16.9.0
     graphql-request: ^7.1.0
+    lodash: ^4.17.21
     lucide-react: ^0.469.0
     next: ~14.2.11
     next-nprogress-bar: ~2.3.13
@@ -4389,6 +4391,13 @@ __metadata:
   version: 0.0.29
   resolution: "@types/json5@npm:0.0.29"
   checksum: e60b153664572116dfea673c5bda7778dbff150498f44f998e34b5886d8afc47f16799280e4b6e241c0472aef1bc36add771c569c68fc5125fc2ae519a3eb9ac
+  languageName: node
+  linkType: hard
+
+"@types/lodash@npm:^4":
+  version: 4.17.13
+  resolution: "@types/lodash@npm:4.17.13"
+  checksum: d0bf8fbd950be71946e0076b30fd40d492293baea75f05931b6b5b906fd62583708c6229abdb95b30205ad24ce1ed2f48bc9d419364f682320edd03405cc0c7e
   languageName: node
   linkType: hard
 

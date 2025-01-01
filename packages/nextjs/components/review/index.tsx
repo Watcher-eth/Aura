@@ -52,7 +52,7 @@ function ReviewPage({
     : 0;
 
   return (
-    <div className="container mx-auto px-4 py-8 max-w-6xl">
+    <div className="container mx-auto px-4 pt-20 max-w-6xl">
       <ReviewHeader
         name={contractInfo.name || 'Unknown Contract'}
         username={contractInfo.address}
@@ -61,6 +61,7 @@ function ReviewPage({
         contractType={contractInfo.contractType}
         chainName={contractInfo.chainName}
         verified={contractInfo.verified}
+        symbol={contractInfo.tokenInfo?.symbol}
       />
       
       <DynamicMiddle

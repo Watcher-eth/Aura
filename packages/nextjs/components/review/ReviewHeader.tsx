@@ -1,6 +1,7 @@
 import { StarIcon } from 'lucide-react';
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "~~/components/ui/avatar";
+import { getChainLogo } from '~~/utils/chainLogos';
 import { type review } from "~~/lib/types/generated/schema.graphql";
 
 interface ReviewHeaderProps {
@@ -10,6 +11,7 @@ interface ReviewHeaderProps {
   numberOfRatings: number;
   contractType?: string;
   chainName: string;
+  chainId: number;
   verified: boolean;
   symbol?: string;
 }
@@ -21,6 +23,7 @@ function ReviewHeader({
   numberOfRatings = 0,
   contractType,
   chainName,
+  chainId,
   verified,
   symbol,
 }: ReviewHeaderProps) {
@@ -40,7 +43,7 @@ function ReviewHeader({
       <div className="flex items-center justify-between">      
         <div className="flex items-center space-x-1.5 mb-1.5">
           <div className='text-md text-gray-400'>{chainName} Network</div>
-          <img className='h-4 w-4 rounded-full object-cover' src={`https://cdn.stamp.fyi/avatar/${username}`} alt={name} />
+          <img className='h-4 w-4 rounded-full object-cover' src={getChainLogo(chainId)} alt={chainName} />
           <div className='text-md text-gray-400'>{'>'}</div>
           <div className='text-md text-gray-400'>{shortAddress}</div>
         </div>

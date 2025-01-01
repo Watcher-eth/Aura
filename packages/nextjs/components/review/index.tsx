@@ -5,6 +5,8 @@ import StatsOverview from './StatsOverview';
 import UserReview from './UserReview';
 import { type review } from "~~/lib/types/generated/schema.graphql";
 import { type ContractInfo } from '~~/utils/getContractInfo';
+import { UserReviewPlaceholder } from './UserReviewPlaceholder';
+import ReviewModal from '../modals/ReviewModal';
 
 interface ReviewPageProps {
   contractInfo: ContractInfo;
@@ -52,7 +54,7 @@ function ReviewPage({
     : 0;
 
   return (
-    <div className="container mx-auto px-4 pt-20 max-w-6xl">
+    <div className="container mx-auto px-4 pt-[6rem] ">
       <ReviewHeader
         name={contractInfo.name || 'Unknown Contract'}
         username={contractInfo.address}
@@ -60,6 +62,7 @@ function ReviewPage({
         numberOfRatings={reviews.length}
         contractType={contractInfo.contractType}
         chainName={contractInfo.chainName}
+        chainId={contractInfo.chainId}
         verified={contractInfo.verified}
         symbol={contractInfo.tokenInfo?.symbol}
       />
@@ -75,13 +78,28 @@ function ReviewPage({
         emojiStats={stats.emojiStats}
       />
 
-      <div className="mt-8 space-y-6">
-        {reviews.map((review) => (
+      <div className="w-full space-y-6 -mt-12">
+        {reviews?.length > 0 ? reviews.map((review) => (
           <UserReview
             key={review.id}
             {...review}
           />
-        ))}
+        )) : <div className='flex flex-col w-full items-center'>{[0,].map((index) => (<UserReviewPlaceholder key={index}/>))}
+        <div className='h-[40vh] w-full absolute bottom-0 z-0 bg-gradient-to-t from-white to-transparent'/>
+        <h1 className="text-[50px] font-bold -mt-[4rem]   z-[10]">No Reviews yet..</h1>
+        <p className="text-gray-600 mt-2 text-lg z-[10]">Be the first to review this contract</p>
+        <div className="flex justify-end mt-4 z-[10] mb-20">
+          <ReviewModal
+            trigger={
+              <button className='px-4 py-1.5 rounded-md border-2 border-[#ededed] bg-[white]'>
+                Write a Review
+              </button>
+            }
+          />
+        </div>
+</div>
+
+        }
       </div>
     </div>
   );

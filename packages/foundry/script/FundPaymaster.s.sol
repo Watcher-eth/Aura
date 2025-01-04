@@ -9,7 +9,7 @@ contract FundPaymaster is Script {
     function run() public {
         uint256 privateKey = vm.envUint("PK");
         address payable paymasterAddress = payable(0x2F94A64652c950e6782F2382318d715f5E74B975);
-        uint256 fundingAmount = 20000000; // 5 ETH
+        uint256 fundingAmount = 200000000000; // 5 ETH
 
         vm.startBroadcast(privateKey);
 

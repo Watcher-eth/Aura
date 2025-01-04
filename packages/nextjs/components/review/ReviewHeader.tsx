@@ -6,29 +6,39 @@ import { type review } from "~~/lib/types/generated/schema.graphql";
 
 interface ReviewHeaderProps {
   name?: string;
-  username: string;
+  address: string;
   rating: number;
   numberOfRatings: number;
   contractType?: string;
-  chainName: string;
   chainId: number;
   verified: boolean;
-  symbol?: string;
+  ticker?: string;
+  image: string
 }
 
 function ReviewHeader({
   name = 'Unknown Contract',
-  username,
+  address,
   rating = 0,
   numberOfRatings = 0,
   contractType,
-  chainName,
   chainId,
   verified,
-  symbol,
+  ticker,
+  image
 }: ReviewHeaderProps) {
-  const shortAddress = `${username?.slice(0, 6)}...${username?.slice(-4)}`;
+  const shortAddress = `${address?.slice(0, 6)}...${address?.slice(-4)}`;
   
+  const chainName = {
+    1: 'Ethereum',
+    137: 'Polygon',
+    42161: 'Arbitrum',
+    10: 'Optimism',
+    8453: 'Base',
+    56: 'BSC',
+    324: 'zkSync Era'
+  }[chainId] || 'Unknown Chain';
+
   const renderStars = (rating: number) => {
     const roundedRating = Math.round(rating);
     return Array(5).fill('⭐️').map((star, index) => (
@@ -51,11 +61,11 @@ function ReviewHeader({
       </div>
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center space-x-4">
-          <img className='h-[6rem] w-[6rem] rounded-[0.65rem] object-cover' src={`https://cdn.stamp.fyi/avatar/${username}`} alt={name} />
+          <img className='h-[6rem] w-[6rem] rounded-[0.65rem] object-cover' src={image} alt={name} />
           <div className="flex flex-col -mt-1.5">
             <div className="flex items-center space-x-2">
               <span className="font-bold text-[2.1rem]">{name}</span>
-              <span className="font-medium text-gray-400 text-[2.1rem]">${symbol}</span>
+              <span className="font-medium text-gray-400 text-[2.1rem]">${ticker}</span>
             </div>
             <div className="flex items-center space-x-1 mt-1">
               {verified && (

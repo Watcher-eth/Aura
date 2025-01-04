@@ -140,3 +140,50 @@ export async function searchContracts(query: string): Promise<SearchResult[]> {
   // Filter out null results and return
   return results.filter((result): result is SearchResult => result !== null);
 }
+
+export async function fetchContractMetadata(address: string, chainId: number) {
+  if (!COVALENT_API_KEY) {
+    throw new Error("Covalent API key not found");
+  }
+
+  try {
+    const normalizedAddress = getAddress(address);
+    
+    // Fetch token metadata
+    const tokenUrl = `https://api.covalenthq.com/v1/${chainId}/tokens/${normalizedAddress}/?key=${COVALENT_API_KEY}`;
+    const tokenResponse = await fetch(tokenUrl);
+    const tokenData = await tokenResponse.json();
+
+    // Fetch balance data
+    const balanceUrl = `https://api.covalenthq.com/v1/${chainId}/address/${normalizedAddress}/balances_v2/?key=${COVALENT_API_KEY}`;
+    const balanceResponse = await fetch(balanceUrl);
+    const balanceData = await balanceResponse.json();
+
+    const tokenInfo = tokenData?.data?.items?.[0];
+    const balanceInfo = balanceData?.data?.items?.find(
+      (item: any) => item.contract_address?.toLowerCase() === normalizedAddress.toLowerCase()
+    );
+
+    if (!tokenInfo && !balanceInfo) {
+      return null;
+    }
+
+    const info = tokenInfo || balanceInfo;
+    
+    return {
+      address: normalizedAddress,
+      chainId: chainId,
+      name: info?.contract_name || "Unknown Contract",
+      ticker: info?.contract_ticker_symbol || "",
+      type: info?.supports_erc?.includes("erc721") ? "NFT" : 
+            info?.supports_erc?.includes("erc20") ? "Token" : "Contract",
+      image: info?.logo_url,
+      marketCap: info?.market_cap_usd || info?.quote_rate,
+      holders: info?.total_supply,
+      createdAt: new Date().toISOString()
+    };
+  } catch (error) {
+    console.error("Error fetching contract metadata:", error);
+    return null;
+  }
+}

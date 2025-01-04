@@ -8,6 +8,7 @@ import { searchContracts } from '~~/hooks/func/Covalent'
 import { debounce } from 'lodash'
 import Link from 'next/link'
 import { SUPPORTED_CHAINS } from '~~/hooks/func/Covalent'
+import { shortenAddress } from '~~/utils/address'
 
 const CHAIN_INFO: { [key: number]: { name: string; icon: string } } = {
   1: {
@@ -46,7 +47,7 @@ const CHAIN_INFO: { [key: number]: { name: string; icon: string } } = {
 
 interface SearchResult {
   chain: number;
-  contractAddress: string;
+  address: string;
   name: string;
   ticker: string;
   type: string;
@@ -101,8 +102,7 @@ export default function GlowingSearch() {
 
   console.log("searchResults: ", searchResults)
   return (
-    <>
-      {/* Blurred backdrop */}
+<div className="relative w-full">      {/* Blurred backdrop */}
       {(isSearching && searchValue) && (
         <div 
           className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40"
@@ -153,7 +153,7 @@ export default function GlowingSearch() {
               <div className="space-y-4 w-full">
                 {searchResults.map((result, index) => (
                   <Link 
-                    href={`/r/${result.chain}/${result.contractAddress}`} 
+                    href={`/r/${result.chain}/${result.address}`} 
                     key={index} 
                     className="block w-full"
                   >
@@ -174,20 +174,20 @@ export default function GlowingSearch() {
                         />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-gray-900 truncate">
+                        <p className="text-md font-medium text-gray-900 truncate">
                           {result.name || 'Unknown Contract'}
                         </p>
-                        <p className="text-sm text-gray-500 truncate">
-                          {result.address}
+                        <p className="text-sm text-[lightgray] truncate">
+                          {result?.address}
                         </p>
                       </div>
                       <div className="flex-shrink-0 text-right">
                         <p className="text-sm font-medium text-gray-900">
-                          {CHAIN_INFO[result.chain]?.name || 'Unknown Chain'}
+                          ${result.ticker || 'Unknown Chain'}
                         </p>
                         {result.type && (
-                          <p className="text-xs text-gray-500">
-                            {result.type}
+                          <p className="text-xs text-[lightgray]">
+                            {result.type.toUpperCase()}
                           </p>
                         )}
                       </div>
@@ -203,6 +203,6 @@ export default function GlowingSearch() {
           </div>
         )}
       </div>
-    </>
+    </div>
   )
 }

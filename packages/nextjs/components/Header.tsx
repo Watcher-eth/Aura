@@ -71,10 +71,10 @@ export const Header = () => {
   );
 
   return (
-    <div className="fixed top-1 w-[99%] navbar min-h-0 flex-shrink-0 justify-between z-50  -mt-8  px-0 sm:px-2    mx-1.5 mt-3">
+    <div className="fixed top-0 w-[100%] navbar min-h-0 flex-shrink-0 justify-between z-50  -mt-9  px-0 sm:px-2    mx-1.5 mt-3">
       <div className="navbar-start w-auto lg:w-1/2">
       
-        <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-0 mr-3 -mt-2.5 rounded-lg shrink-0">
+        <Link href="/" passHref className="hidden lg:flex items-center gap-2 -ml-6 mr-3 -mt-2.5 rounded-lg shrink-0">
             <img alt="SE2 logo" className="cursor-pointer   w-[10rem]  "   src="/Logo1.png" />
       
         </Link>

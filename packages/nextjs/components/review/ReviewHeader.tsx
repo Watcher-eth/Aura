@@ -1,4 +1,4 @@
-import { StarIcon } from 'lucide-react';
+import { Calendar, Plus, StarIcon } from 'lucide-react';
 import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "~~/components/ui/avatar";
 import { getChainLogo } from '~~/utils/chainLogos';
@@ -14,7 +14,9 @@ interface ReviewHeaderProps {
   chainId: number;
   verified: boolean;
   ticker?: string;
-  image: string
+  image: string;
+  createdAt: string;
+  type: string
 }
 
 function ReviewHeader({
@@ -26,7 +28,9 @@ function ReviewHeader({
   chainId,
   verified,
   ticker,
-  image
+  image,
+  createdAt,
+  type
 }: ReviewHeaderProps) {
   const shortAddress = `${address?.slice(0, 6)}...${address?.slice(-4)}`;
   
@@ -39,6 +43,20 @@ function ReviewHeader({
     56: 'BSC',
     324: 'zkSync Era'
   }[chainId] || 'Unknown Chain';
+
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        month: '2-digit',
+        day: '2-digit',
+        year: 'numeric'
+      }).replace(/\//g, '.');
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return 'Invalid Date';
+    }
+  };
 
   const renderStars = (rating: number) => {
     const roundedRating = Math.round(rating);
@@ -68,6 +86,10 @@ function ReviewHeader({
             <div className="flex items-center space-x-2">
               <span className="font-bold text-[2.1rem]">{name}</span>
               <span className="font-medium text-gray-400 text-[2.1rem]">${ticker}</span>
+            </div>
+            <div className="flex items-center space-x-2">
+              <span className="px-2 py-1 bg-[#fefefe] border-[0.1rem] border-[#ededed] flex items-center rounded-full text-sm"><Calendar color='#aaaaaa' className='mr-1' size={14}/><div>{formatDate(createdAt)}</div></span>
+              <span className="px-2 py-1 bg-[#fefefe] border-[0.1rem] border-[#ededed] rounded-full text-sm">{type}</span>
             </div>
             <div className="flex items-center space-x-1 mt-1">
               {verified && (

@@ -68,9 +68,9 @@ console.log("cap", Number(marketCap), marketCap)
         </div>
         <div className="flex flex-col">
           <span className="text-md font-medium text-muted-foreground">
-            Market Cap
+            Current Price
           </span>
-          <span className="text-[2rem] font-bold">{formatNumber(marketCap )}</span>
+          <span className="text-[2rem] font-bold">${marketCap}</span>
           <span className="text-sm  text-muted-foreground">
           Updated hourly  
           </span>

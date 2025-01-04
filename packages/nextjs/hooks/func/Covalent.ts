@@ -141,6 +141,65 @@ export async function searchContracts(query: string): Promise<SearchResult[]> {
   return results.filter((result): result is SearchResult => result !== null);
 }
 
+async function getContractType(address: string, chainId: number): Promise<string> {
+  if (!ETHERSCAN_API_KEY) {
+    console.warn("Etherscan API key not found");
+    return "Unknown";
+  }
+
+  // Map chainId to Etherscan API URLs
+  const apiUrls: { [key: number]: string } = {
+    1: "https://api.etherscan.io/api",
+    137: "https://api.polygonscan.com/api",
+    42161: "https://api.arbiscan.io/api",
+    10: "https://api.optimistic.etherscan.io/api",
+    8453: "https://api.basescan.org/api",
+    56: "https://api.bscscan.com/api"
+  };
+
+  const apiUrl = apiUrls[chainId];
+  if (!apiUrl) return "Unknown";
+
+  try {
+    const url = `${apiUrl}?module=contract&action=getabi&address=${address}&apikey=${ETHERSCAN_API_KEY}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data.status === "1" && data.result) {
+      const abi = JSON.parse(data.result);
+      
+      // Check for standard interfaces
+      const hasERC20 = abi.some((item: any) => 
+        ["transfer", "transferFrom", "approve"].every(method => 
+          abi.some((abiItem: any) => abiItem.name === method)
+        )
+      );
+      
+      const hasERC721 = abi.some((item: any) => 
+        ["safeTransferFrom", "ownerOf", "balanceOf"].every(method => 
+          abi.some((abiItem: any) => abiItem.name === method)
+        )
+      );
+
+      const hasERC1155 = abi.some((item: any) => 
+        ["safeTransferFrom", "balanceOf", "safeBatchTransferFrom"].every(method => 
+          abi.some((abiItem: any) => abiItem.name === method)
+        )
+      );
+
+      if (hasERC1155) return "ERC1155";
+      if (hasERC721) return "ERC721";
+      if (hasERC20) return "ERC20";
+      return "Custom";
+    }
+    
+    return "Unknown";
+  } catch (error) {
+    console.error("Error fetching contract type:", error);
+    return "Unknown";
+  }
+}
+
 export async function fetchContractMetadata(address: string, chainId: number) {
   if (!COVALENT_API_KEY) {
     throw new Error("Covalent API key not found");
@@ -159,7 +218,7 @@ export async function fetchContractMetadata(address: string, chainId: number) {
     const balanceResponse = await fetch(balanceUrl);
     const balanceData = await balanceResponse.json();
 
-    // Fetch holders count using the correct endpoint structure
+    // Fetch holders count
     const holdersUrl = `https://api.covalenthq.com/v1/${chainId}/tokens/${normalizedAddress}/token_holders_v2/?key=${COVALENT_API_KEY}&page-size=1`;
     const holdersResponse = await fetch(holdersUrl);
     const holdersData = await holdersResponse.json();
@@ -170,25 +229,19 @@ export async function fetchContractMetadata(address: string, chainId: number) {
     const balanceInfo = balanceData?.data?.items?.find(
       (item: any) => item.contract_address?.toLowerCase() === normalizedAddress.toLowerCase()
     );
+    const holdersCount = holdersData?.data?.pagination?.total_count || balanceInfo?.total_supply;
 
-    if (!tokenInfo && !balanceInfo) {
-      return null;
-    }
-
-    const info = tokenInfo || balanceInfo;
+    // Get contract type from Etherscan
+    const contractType = await getContractType(normalizedAddress, chainId);
     
-    // Get holders count from the response
-    const holdersCount = holdersData?.data?.pagination?.total_count || info?.total_supply || 0;
-
     return {
       address: normalizedAddress,
       chainId: chainId,
-      name: info?.contract_name || "Unknown Contract",
-      ticker: info?.contract_ticker_symbol || "",
-      type: info?.supports_erc?.includes("erc721") ? "NFT" : 
-            info?.supports_erc?.includes("erc20") ? "Token" : "Contract",
-      image: info?.logo_url,
-      marketCap: info?.market_cap_usd || info?.quote_rate,
+      name: tokenInfo?.contract_name || balanceInfo?.contract_name || "Unknown Contract",
+      ticker: tokenInfo?.contract_ticker_symbol || balanceInfo?.contract_ticker_symbol || "",
+      type: contractType,
+      image: tokenInfo?.logo_url || balanceInfo?.logo_url,
+      marketCap: tokenInfo?.market_cap_usd || balanceInfo?.quote_rate,
       holders: holdersCount,
       createdAt: new Date().toISOString()
     };

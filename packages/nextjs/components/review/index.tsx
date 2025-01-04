@@ -41,6 +41,8 @@ function ReviewPage({ contractInfo, reviews }: Props) {
         chainId={contractInfo.chainId}
         image={contractInfo.image}
         ticker={contractInfo.ticker}
+        createdAt={contractInfo.createdAt}
+        type={contractInfo.type!}
       />
   <DynamicMiddle
         images={[contractInfo.image || 'https://via.placeholder.com/150']}

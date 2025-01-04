@@ -1,3 +1,6 @@
+import { fetchContractMetadata, SUPPORTED_CHAINS } from "~~/hooks/func/Covalent";
+import { Address } from "viem";
+
 interface ContractInfo {
   address: string;
   chainId: number;
@@ -5,47 +8,32 @@ interface ContractInfo {
   contractType?: string;
   createdAt: string;
   name?: string;
+  ticker?: string;
   image?: string;
-  implementation?: string;
-  verified: boolean;
-  abi?: any;
-  tokenInfo?: {
-    totalSupply?: string;
-    holders?: number;
-    decimals?: number;
-    symbol?: string;
-  };
+  holders?: number;
+  marketCap?: number;
 }
 
-const ETHERSCAN_API_KEY = process.env.NEXT_PUBLIC_ETHERSCAN_API_KEY;
-const CHAIN_ENDPOINTS = {
-  1: {
-    name: 'Ethereum',
-    endpoint: 'https://api.etherscan.io/api',
-  },
-  // Add more chains as needed
+const CHAIN_NAMES: { [key: number]: string } = {
+  1: "Ethereum",
+  137: "Polygon",
+  42161: "Arbitrum",
+  10: "Optimism",
+  8453: "Base",
+  56: "BSC",
+  324: "zkSync Era",
+  37111: "Lens Testnet",
 };
 
 async function getContractABI(address: string, chainId: number): Promise<{ abi: any; verified: boolean }> {
+  // This function is not used in the new implementation, but it's left here for reference
   try {
-    const endpoint = CHAIN_ENDPOINTS[chainId as keyof typeof CHAIN_ENDPOINTS]?.endpoint;
-    if (!endpoint) {
-      return { abi: null, verified: false };
-    }
-
-    const response = await fetch(
-      `${endpoint}?module=contract&action=getabi&address=${address}&apikey=${ETHERSCAN_API_KEY}`,
-      { next: { revalidate: 3600 } }
-    );
-
+    const endpoint = `https://api.covalenthq.com/v1/${chainId}/address/${address}/metadata/`;
+    const response = await fetch(endpoint);
     const data = await response.json();
-    if (data.status === '1' && data.result) {
-      return { 
-        abi: JSON.parse(data.result),
-        verified: true
-      };
+    if (data.data.items) {
+      return { abi: data.data.items[0].external_data.abi, verified: true };
     }
-
     return { abi: null, verified: false };
   } catch {
     return { abi: null, verified: false };
@@ -53,39 +41,21 @@ async function getContractABI(address: string, chainId: number): Promise<{ abi: 
 }
 
 async function getTokenInfo(address: string, chainId: number, contractType: string): Promise<any> {
+  // This function is not used in the new implementation, but it's left here for reference
   try {
-    const endpoint = CHAIN_ENDPOINTS[chainId as keyof typeof CHAIN_ENDPOINTS]?.endpoint;
-    if (!endpoint) return null;
-
-    // Get token transactions to determine info
-    const txResponse = await fetch(
-      `${endpoint}?module=account&action=tokentx&address=${address}&startblock=0&endblock=99999999&sort=asc&apikey=${ETHERSCAN_API_KEY}`,
-      { next: { revalidate: 3600 } }
-    );
-
-    const txData = await txResponse.json();
-    if (txData.status !== '1' || !txData.result?.length) {
-      return null;
+    const endpoint = `https://api.covalenthq.com/v1/${chainId}/address/${address}/balances_v2/?quote-currency=USD&format=JSON&nft=true&no-nft-fetch=false`;
+    const response = await fetch(endpoint);
+    const data = await response.json();
+    if (data.data.items) {
+      return {
+        symbol: data.data.items[0].contract_name,
+        name: data.data.items[0].contract_name,
+        decimals: data.data.items[0].contract_decimals,
+        totalSupply: data.data.items[0].total_supply,
+        holders: data.data.items[0].num_holders,
+      };
     }
-
-    // Get holder count
-    const holdersResponse = await fetch(
-      `${endpoint}?module=token&action=tokenholderlist&contractaddress=${address}&apikey=${ETHERSCAN_API_KEY}`,
-      { next: { revalidate: 3600 } }
-    );
-    
-    const holdersData = await holdersResponse.json();
-    const holders = holdersData.status === '1' ? holdersData.result.length : 0;
-
-    // Extract token info from first transaction
-    const firstTx = txData.result[0];
-    return {
-      symbol: firstTx.tokenSymbol,
-      name: firstTx.tokenName,
-      decimals: parseInt(firstTx.tokenDecimal),
-      totalSupply: firstTx.value, // This is just from first tx, not actual total supply
-      holders,
-    };
+    return null;
   } catch (error) {
     console.error('Error fetching token info:', error);
     return null;
@@ -93,6 +63,7 @@ async function getTokenInfo(address: string, chainId: number, contractType: stri
 }
 
 function detectContractType(abi: any) {
+  // This function is not used in the new implementation, but it's left here for reference
   if (!abi) return undefined;
   
   const hasERC20 = abi.some((i: any) => 
@@ -121,25 +92,18 @@ function detectContractType(abi: any) {
 }
 
 async function getContractCreation(address: string, chainId: number): Promise<string | null> {
+  // This function is not used in the new implementation, but it's left here for reference
   try {
-    const endpoint = CHAIN_ENDPOINTS[chainId as keyof typeof CHAIN_ENDPOINTS]?.endpoint;
-    if (!endpoint) return null;
-
-    const response = await fetch(
-      `${endpoint}?module=contract&action=getcontractcreation&contractaddresses=${address}&apikey=${ETHERSCAN_API_KEY}`,
-      { next: { revalidate: 3600 } }
-    );
-
+    const endpoint = `https://api.covalenthq.com/v1/${chainId}/address/${address}/transactions_v2/?quote-currency=USD&format=JSON&no-logs=false`;
+    const response = await fetch(endpoint);
     const data = await response.json();
-    if (data.status === '1' && data.result?.[0]?.txHash) {
-      const txResponse = await fetch(
-        `${endpoint}?module=proxy&action=eth_getTransactionByHash&txhash=${data.result[0].txHash}&apikey=${ETHERSCAN_API_KEY}`,
-        { next: { revalidate: 3600 } }
-      );
+    if (data.data.items) {
+      const txHash = data.data.items[0].tx_hash;
+      const txResponse = await fetch(`https://api.covalenthq.com/v1/${chainId}/transaction_v2/${txHash}/?quote-currency=USD&format=JSON`);
       const txData = await txResponse.json();
-      if (txData.result?.blockNumber) {
-        const timestamp = parseInt(txData.result.blockNumber, 16).toString();
-        return new Date(parseInt(timestamp) * 1000).toISOString();
+      if (txData.data.items) {
+        const timestamp = txData.data.items[0].block_signed_at;
+        return new Date(timestamp).toISOString();
       }
     }
     return null;
@@ -148,46 +112,34 @@ async function getContractCreation(address: string, chainId: number): Promise<st
   }
 }
 
-export async function getContractInfo(address: string): Promise<ContractInfo | null> {
+export async function getContractInfo(address: string, chainId?: number): Promise<ContractInfo | null> {
   try {
-    // For now, we'll default to Ethereum mainnet
-    const chainId = 1;
-    const chainName = CHAIN_ENDPOINTS[chainId]?.name || 'Unknown Chain';
-
-    // Get contract ABI and verify status
-    const { abi, verified } = await getContractABI(address, chainId);
+    // If chainId is provided, only fetch for that chain
+    const results = await fetchContractMetadata(address as Address, chainId);
     
-    // Detect contract type from ABI
-    const contractType = detectContractType(abi);
-
-    // Get contract creation date
-    const createdAt = await getContractCreation(address, chainId) || new Date().toISOString();
-
-    // Get token-specific info if it's a token contract
-    let tokenInfo = null;
-    if (contractType && ['ERC20', 'ERC721', 'ERC1155'].includes(contractType)) {
-      tokenInfo = await getTokenInfo(address, chainId, contractType);
+    if (!results || results.length === 0) {
+      return null;
     }
 
-    // Get contract name from ABI if available, or from token info
-    const name = tokenInfo?.name || 
-                 abi?.find((item: any) => item.type === 'constructor')?.name || 
-                 'Unknown Contract';
-
+    // Get the first result that has data
+    const contractData = results[0];
+    
     return {
-      address,
-      chainId,
-      chainName,
-      contractType,
-      createdAt,
-      name,
-      verified,
-      abi,
-      tokenInfo,
-      image: `https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/${address}/logo.png`,
+      address: contractData.address,
+      chainId: contractData.chain,
+      chainName: CHAIN_NAMES[contractData.chain] || `Chain ${contractData.chain}`,
+      contractType: contractData.type,
+      name: contractData.name,
+      ticker: contractData.ticker,
+      image: contractData.image,
+      createdAt: contractData.createdAt || new Date().toISOString(),
+      holders: typeof contractData.holders === 'number' ? contractData.holders : undefined,
+      marketCap: typeof contractData.marketCap === 'number' ? contractData.marketCap : undefined,
     };
   } catch (error) {
     console.error('Error fetching contract info:', error);
     return null;
   }
 }
+
+export type { ContractInfo };

@@ -1,21 +1,29 @@
-import { getContractInfo } from '../../../utils/getContractInfo';
+import { getContractInfo } from '../../../../utils/getContractInfo';
 import ReviewModal from '~~/components/modals/ReviewModal';
 import ReviewPage from '~~/components/review';
 import { notFound } from 'next/navigation';
+import { fetchContractMetadata, SUPPORTED_CHAINS } from '~~/hooks/func/Covalent';
 
 interface Props {
   params: {
-    id: string;
+    chainId: string;
+    address: string;
   };
 }
 
 export default async function Review({ params }: Props) {
-  // Validate address format
-  if (!params.id || !/^0x[a-fA-F0-9]{40}$/.test(params.id)) {
+  // Validate chainId
+  const chainId = parseInt(params.chainId);
+  if (!SUPPORTED_CHAINS.includes(chainId)) {
     notFound();
   }
 
-  const addressInfo = await getContractInfo(params.id);
+  // Validate address format
+  if (!params.address || !/^0x[a-fA-F0-9]{40}$/.test(params.address)) {
+    notFound();
+  }
+
+  const addressInfo = await fetchContractMetadata(params.address, chainId);
 
   if (!addressInfo) {
     notFound();
@@ -29,14 +37,24 @@ export default async function Review({ params }: Props) {
 }
 
 export async function generateMetadata({ params }: Props) {
-  if (!params.id || !/^0x[a-fA-F0-9]{40}$/.test(params.id)) {
+  // Validate chainId
+  const chainId = parseInt(params.chainId);
+  if (!SUPPORTED_CHAINS.includes(chainId)) {
+    return {
+      title: 'Invalid Chain',
+      description: 'The provided chain ID is not supported',
+    };
+  }
+
+  // Validate address format
+  if (!params.address || !/^0x[a-fA-F0-9]{40}$/.test(params.address)) {
     return {
       title: 'Invalid Address',
       description: 'The provided address is invalid',
     };
   }
 
-  const addressInfo = await getContractInfo(params.id);
+  const addressInfo = await fetchContractMetadata(params.address, chainId);
 
   if (!addressInfo) {
     return {

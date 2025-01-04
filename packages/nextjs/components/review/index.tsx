@@ -1,90 +1,67 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReviewHeader from './ReviewHeader';
-import DynamicMiddle from './DynamicMiddle';
 import StatsOverview from './StatsOverview';
+import { Review } from '~~/__generated__/graphql';
 import UserReview from './UserReview';
-import { type review } from "~~/lib/types/generated/schema.graphql";
-import { type ContractInfo } from '~~/utils/getContractInfo';
-import { UserReviewPlaceholder } from './UserReviewPlaceholder';
 import ReviewModal from '../modals/ReviewModal';
+import { UserReviewPlaceholder } from './UserReviewPlaceholder';
+import DynamicMiddle from './DynamicMiddle';
 
-interface ReviewPageProps {
-  contractInfo: ContractInfo;
-  reviews?: Array<{
-    id: string;
-    profilePicture?: string;
-    name: string;
-    rating: number;
-    reviewText: string;
-    reactions: Array<{
-      emoji: string;
-      count: number;
-      selected: boolean;
-    }>;
-  }>;
+interface ContractInfo {
+  address: string;
+  chainId: number;
+  name: string;
+  ticker?: string;
+  type?: string;
+  image?: string;
+  marketCap?: number;
+  holders?: number;
+  createdAt: string;
 }
 
-function ReviewPage({
-  contractInfo,
-  reviews = [],
-}: ReviewPageProps) {
-  console.log("contractInfo", contractInfo);
-  
-  const stats = {
-    totalReviews: reviews.length,
-    holders: contractInfo.tokenInfo?.holders || 0,
-    marketCap: contractInfo.tokenInfo?.totalSupply 
-      ? `${parseInt(contractInfo.tokenInfo.totalSupply).toLocaleString()} ${contractInfo.tokenInfo.symbol || ''}`
-      : "N/A",
-    emojiStats: reviews.reduce((acc, review) => {
-      review.reactions.forEach(reaction => {
-        const existing = acc.find(stat => stat.emoji === reaction.emoji);
-        if (existing) {
-          existing.count += reaction.count;
-        } else {
-          acc.push({ emoji: reaction.emoji, count: reaction.count });
-        }
-      });
-      return acc;
-    }, [] as Array<{ emoji: string; count: number }>),
-  };
+interface Props {
+  contractInfo: ContractInfo;
+  reviews: Review[]
+}
 
-  const averageRating = reviews.length > 0
-    ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length
+function ReviewPage({ contractInfo, reviews }: Props) {
+  console.log("Contract Info in Review Page:", contractInfo);
+  
+  const stats ={}
+  const averageRating = reviews?.length > 0
+    ? reviews?.reduce((sum, review) => sum + review.rating, 0) / reviews.length
     : 0;
 
   return (
-    <div className="container mx-auto px-4 pt-[6rem] ">
+    <div className="container px-4 pt-[6rem]">
       <ReviewHeader
         name={contractInfo.name || 'Unknown Contract'}
-        username={contractInfo.address}
+        address={contractInfo.address}
         rating={averageRating}
-        numberOfRatings={reviews.length}
-        contractType={contractInfo.contractType}
-        chainName={contractInfo.chainName}
         chainId={contractInfo.chainId}
-        verified={contractInfo.verified}
-        symbol={contractInfo.tokenInfo?.symbol}
+        image={contractInfo.image}
+        ticker={contractInfo.ticker}
       />
-      
-      <DynamicMiddle
+  <DynamicMiddle
         images={[contractInfo.image || 'https://via.placeholder.com/150']}
       />
 
       <StatsOverview
-        totalReviews={stats.totalReviews}
-        holders={stats.holders}
-        marketCap={stats.marketCap}
-        emojiStats={stats.emojiStats}
+        address={contractInfo.address}
+        totalReviews={reviews?.length}
+        averageRating={averageRating}
+        holders={contractInfo.holders}
+        marketCap={contractInfo.marketCap}
+        emojiStats={stats?.emojiStats}
       />
 
-      <div className="w-full space-y-6 -mt-12">
+<div className="w-full space-y-6 -mt-12">
         {reviews?.length > 0 ? reviews.map((review) => (
           <UserReview
             key={review.id}
             {...review}
           />
-        )) : <div className='flex flex-col w-full items-center'>{[0,].map((index) => (<UserReviewPlaceholder key={index}/>))}
+        )) : <div className='flex flex-col w-full items-center'>{[0,].map((index) => (<UserReviewPlaceholder key={index}/>))}</div>}
         <div className='h-[40vh] w-full absolute bottom-0 z-0 bg-gradient-to-t from-white to-transparent'/>
         <h1 className="text-[50px] font-bold -mt-[4rem]   z-[10]">No Reviews yet..</h1>
         <p className="text-gray-600 mt-2 text-lg z-[10]">Be the first to review this contract</p>
@@ -97,9 +74,6 @@ function ReviewPage({
             }
           />
         </div>
-</div>
-
-        }
       </div>
     </div>
   );
@@ -110,10 +84,11 @@ export const mockReviewPage = {
   contractInfo: {
     name: "Ethereum",
     address: "0x1234567890",
-    contractType: "ERC20",
-    chainName: "Ethereum Mainnet",
-    verified: true,
+    chainId: 1,
     image: "https://example.com/ethereum-logo.png",
+    marketCap: 100000000,
+    holders: 10000,
+    createdAt: "2022-01-01T00:00:00.000Z",
   },
   reviews: [
     {

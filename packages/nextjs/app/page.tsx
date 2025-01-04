@@ -157,7 +157,7 @@ export default function Page() {
           {/* Floating images - positioned exactly as in screenshot */}
           <div className="absolute w-[150px] h-[150px] left-[10%] top-[5%] rotate-2 transition-transform duration-300 hover:scale-105 hover:-rotate-2">
             <img
-              src="https://upload.wikimedia.org/wikipedia/en/b/bd/Pump_fun_logo.png"
+              src="https://d22z7e9agkmda7.cloudfront.net/witch2.png"
               alt="Gradient art"
               width={150}
               height={150}
@@ -197,7 +197,7 @@ export default function Page() {
 
           <div className="absolute w-[150px] h-[150px] left-[5%] bottom-[10%] rotate-3 transition-transform duration-300 hover:scale-105 hover:-rotate-3">
             <img
-              src="https://static01.nyt.com/images/2021/03/12/arts/12nft-buyer-1/12nft-notebook-1-mediumSquareAt3X.jpg"
+              src="https://raw.seadn.io/files/0919e7468d8708b3d848de4db1088bab.svg"
               alt="Flower field"
               width={180}
               height={180}

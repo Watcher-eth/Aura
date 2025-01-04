@@ -27,7 +27,7 @@ function ReviewHeader({
   verified,
   symbol,
 }: ReviewHeaderProps) {
-  const shortAddress = `${username.slice(0, 6)}...${username.slice(-4)}`;
+  const shortAddress = `${username?.slice(0, 6)}...${username?.slice(-4)}`;
   
   const renderStars = (rating: number) => {
     const roundedRating = Math.round(rating);

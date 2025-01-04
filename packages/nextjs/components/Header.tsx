@@ -71,43 +71,18 @@ export const Header = () => {
   );
 
   return (
-    <div className="fixed top-1 w-[99%] navbar min-h-0 flex-shrink-0 justify-between z-50   px-0 sm:px-2    mx-1.5 mt-3">
+    <div className="fixed top-1 w-[99%] navbar min-h-0 flex-shrink-0 justify-between z-50  -mt-8  px-0 sm:px-2    mx-1.5 mt-3">
       <div className="navbar-start w-auto lg:w-1/2">
-        <div className="lg:hidden dropdown" ref={burgerMenuRef}>
-          <label
-            tabIndex={0}
-            className={`ml-1 btn btn-ghost ${isDrawerOpen ? "hover:bg-secondary" : "hover:bg-transparent"}`}
-            onClick={() => {
-              setIsDrawerOpen(prevIsOpenState => !prevIsOpenState);
-            }}
-          >
-            <Bars3Icon className="h-1/2" />
-          </label>
-          {isDrawerOpen && (
-            <ul
-              tabIndex={0}
-              className="menu menu-compact dropdown-content mt-3 p-2 py-0 shadow bg-base-100 rounded-box w-52"
-              onClick={() => {
-                setIsDrawerOpen(false);
-              }}
-            >
-              <HeaderMenuLinks />
-            </ul>
-          )}
-        </div>
-        <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-3 rounded-lg shrink-0">
-            <img alt="SE2 logo" className="cursor-pointer  w-12 h-12 rounded-full border-4 border-white"   src="https://i.pinimg.com/originals/96/1e/d3/961ed30ec276ddf46ac137130baf5193.jpg" />
-          <div className="flex flex-col">
-            <span className="font-bold text-[2rem] leading-tight">Aura</span>
-
-          </div>
+      
+        <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-0 mr-3 -mt-2.5 rounded-lg shrink-0">
+            <img alt="SE2 logo" className="cursor-pointer   w-[10rem]  "   src="/Logo1.png" />
+      
         </Link>
 
       </div>
       <div className="navbar-end flex-grow mr-4">
         <ConnectKitButton />
 
-        <FaucetButton />
       </div>
     </div>
   );

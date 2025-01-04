@@ -55,24 +55,26 @@ function ReviewPage({ contractInfo, reviews }: Props) {
         emojiStats={stats?.emojiStats}
       />
 
-<div className="w-full space-y-6 -mt-12">
+<div className="w-full space-y-6 -mt-12 items-center">
         {reviews?.length > 0 ? reviews.map((review) => (
           <UserReview
             key={review.id}
             {...review}
           />
         )) : <div className='flex flex-col w-full items-center'>{[0,].map((index) => (<UserReviewPlaceholder key={index}/>))}</div>}
-        <div className='h-[40vh] w-full absolute bottom-0 z-0 bg-gradient-to-t from-white to-transparent'/>
-        <h1 className="text-[50px] font-bold -mt-[4rem]   z-[10]">No Reviews yet..</h1>
-        <p className="text-gray-600 mt-2 text-lg z-[10]">Be the first to review this contract</p>
-        <div className="flex justify-end mt-4 z-[10] mb-20">
-          <ReviewModal
-            trigger={
-              <button className='px-4 py-1.5 rounded-md border-2 border-[#ededed] bg-[white]'>
-                Write a Review
-              </button>
-            }
-          />
+        <div className='h-[40vh] w-full absolute bottom-0 z-[1] bg-gradient-to-t from-white to-transparent'/>
+        <div className="relative z-[2] flex flex-col items-center">
+          <h1 className="text-[50px] font-bold -mt-[4rem]">No Reviews yet..</h1>
+          <p className="text-gray-600 mt-2 text-lg">Be the first to review this contract</p>
+          <div className="flex justify-end mt-4 mb-20">
+            <ReviewModal
+              trigger={
+                <button className='px-4 py-1.5 rounded-md border-2 border-[#ededed] bg-[white]'>
+                  Write a Review
+                </button>
+              }
+            />
+          </div>
         </div>
       </div>
     </div>

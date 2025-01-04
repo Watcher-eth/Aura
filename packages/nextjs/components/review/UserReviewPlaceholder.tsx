@@ -2,7 +2,7 @@ import React from 'react';
 
 export function UserReviewPlaceholder() {
   return (
-    <div className="  rounded-lg  w-full pb-6 ">
+    <div className="  rounded-lg  w-full pb-6  ">
       <div className='flex w-full items-center justify-between '>
         <div className="flex  w-full items-center space-x-4">
         <div className="w-20 h-20 bg-gray-200 rounded-[0.5rem] animate-pulse"></div>

@@ -3,6 +3,7 @@ import React from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "~~/components/ui/avatar";
 import { getChainLogo } from '~~/utils/chainLogos';
 import { type review } from "~~/lib/types/generated/schema.graphql";
+import ReviewModal from '../modals/ReviewModal';
 
 interface ReviewHeaderProps {
   name?: string;
@@ -57,7 +58,8 @@ function ReviewHeader({
           <div className='text-md text-gray-400'>{'>'}</div>
           <div className='text-md text-gray-400'>{shortAddress}</div>
         </div>
-        <div className='px-4 py-1.5 rounded-md border-2 border-[#ededed] bg-[white]'>Write a Review</div>
+        <ReviewModal
+              trigger={<div className='px-4 py-1.5 rounded-md border-2 border-[#ededed] bg-[white]'>Write a Review</div>}/>
       </div>
       <div className="flex items-center justify-between w-full">
         <div className="flex items-center space-x-4">

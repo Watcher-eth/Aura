@@ -159,6 +159,13 @@ export async function fetchContractMetadata(address: string, chainId: number) {
     const balanceResponse = await fetch(balanceUrl);
     const balanceData = await balanceResponse.json();
 
+    // Fetch holders count using the correct endpoint structure
+    const holdersUrl = `https://api.covalenthq.com/v1/${chainId}/tokens/${normalizedAddress}/token_holders_v2/?key=${COVALENT_API_KEY}&page-size=1`;
+    const holdersResponse = await fetch(holdersUrl);
+    const holdersData = await holdersResponse.json();
+
+    console.log("Holders Data:", JSON.stringify(holdersData, null, 2));
+
     const tokenInfo = tokenData?.data?.items?.[0];
     const balanceInfo = balanceData?.data?.items?.find(
       (item: any) => item.contract_address?.toLowerCase() === normalizedAddress.toLowerCase()
@@ -170,6 +177,9 @@ export async function fetchContractMetadata(address: string, chainId: number) {
 
     const info = tokenInfo || balanceInfo;
     
+    // Get holders count from the response
+    const holdersCount = holdersData?.data?.pagination?.total_count || info?.total_supply || 0;
+
     return {
       address: normalizedAddress,
       chainId: chainId,
@@ -179,7 +189,7 @@ export async function fetchContractMetadata(address: string, chainId: number) {
             info?.supports_erc?.includes("erc20") ? "Token" : "Contract",
       image: info?.logo_url,
       marketCap: info?.market_cap_usd || info?.quote_rate,
-      holders: info?.total_supply,
+      holders: holdersCount,
       createdAt: new Date().toISOString()
     };
   } catch (error) {

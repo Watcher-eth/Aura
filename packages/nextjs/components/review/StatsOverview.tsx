@@ -11,6 +11,7 @@ import {
   YAxis,
 } from 'recharts';
 import { Card } from '~~/components/ui/card';
+import { EmojiStatsPlaceholder } from './UserReviewPlaceholder';
 
 interface StatsOverviewProps {
   totalReviews: number;
@@ -44,7 +45,9 @@ export default function StatsOverview({
     name: stat.emoji,
     value: stat.count,
   }));
-console.log("cap", Number(marketCap), marketCap)
+
+  console.log("lenght",data ?? "Yes")
+
   return (
     <div className="w-full mt-4">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 ">
@@ -75,7 +78,7 @@ console.log("cap", Number(marketCap), marketCap)
           Updated hourly  
           </span>
         </div>
-        {data.length + 1 > 0 && (
+        {data.length  > 0 ?(
         <div className="h-[200px] w-full p-6">
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data}>
@@ -121,7 +124,7 @@ console.log("cap", Number(marketCap), marketCap)
             </BarChart>
           </ResponsiveContainer>
         </div>
-      )}
+      ): <EmojiStatsPlaceholder/>}
       </div>
 
       

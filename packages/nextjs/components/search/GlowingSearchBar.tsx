@@ -17,31 +17,31 @@ const CHAIN_INFO: { [key: number]: { name: string; icon: string } } = {
   },
   56: {
     name: "BNB Smart Chain",
-    icon: "https://assets.coingecko.com/coins/images/825/small/bnb-icon2_2x.png",
+    icon: "https://cdn.pixabay.com/photo/2021/04/30/16/47/binance-logo-6219389_1280.png",
   },
   137: {
     name: "Polygon",
-    icon: "https://assets.coingecko.com/coins/images/4713/small/matic-token-icon.png",
+    icon: "https://seeklogo.com/images/P/polygon-matic-logo-7D8F780975-seeklogo.com.png",
   },
   42161: {
     name: "Arbitrum",
-    icon: "https://assets.coingecko.com/coins/images/16547/small/photo_2023-03-29_21.47.00.jpeg",
+    icon: "https://s2.coinmarketcap.com/static/img/coins/200x200/11841.png",
   },
   10: {
     name: "Optimism",
-    icon: "https://assets.coingecko.com/coins/images/25244/small/Optimism.png",
+    icon: "https://avatars.githubusercontent.com/u/58791460?v=4a",
   },
   8453: {
     name: "Base",
-    icon: "https://assets.coingecko.com/coins/images/28892/small/base-token.png",
+    icon: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQNZrouU_9cELxCRIFHcEgezwQIbcFw--3pig&s",
   },
   324: {
     name: "zkSync Era",
-    icon: "https://assets.coingecko.com/coins/images/28137/small/zksync.png",
+    icon: "https://images.mirror-media.xyz/publication-images/TQO0l-WhYntzhGJLPX2wf.png?height=820&width=820",
   },
   37111: {
     name: "Lens Testnet",
-    icon: "https://assets.coingecko.com/coins/images/28561/small/lens.png",
+    icon: "https://dropsearn.fra1.cdn.digitaloceanspaces.com/media/projects/logos/lens-protocol_logo.webp",
   },
 };
 
@@ -54,6 +54,7 @@ interface SearchResult {
   balance?: string;
   quote?: number;
   lastTransferredAt?: string;
+  image?:string
 }
 
 export default function GlowingSearch() {
@@ -69,7 +70,10 @@ export default function GlowingSearch() {
         setIsLoading(true);
         try {
           const results = await searchContracts(query);
+          console.log("Search results before setting:", results);
           setSearchResults(results);
+          console.log("Search results after setting:", results);
+
         } catch (error) {
           console.error('Search error:', error);
           setSearchResults([]);
@@ -100,7 +104,6 @@ export default function GlowingSearch() {
     debouncedSearch(value);
   };
 
-  console.log("searchResults: ", searchResults)
   return (
 <div className="relative w-full">      {/* Blurred backdrop */}
       {(isSearching && searchValue) && (
@@ -158,7 +161,7 @@ export default function GlowingSearch() {
                     className="block w-full"
                   >
                     <div 
-                      key={`${result.chain}-${result.contractAddress}`} 
+                      key={`${result.chain}-${result.address}`} 
                       className="flex items-center space-x-4 p-3 rounded-sm hover:bg-white/10 transition-colors w-full"
                     >
                       <div className="flex-shrink-0 w-11 h-11 relative">
@@ -170,7 +173,7 @@ export default function GlowingSearch() {
                            <img 
                           src={CHAIN_INFO[result.chain]?.icon || "https://cdn-icons-png.flaticon.com/512/6681/6681925.png"} 
                           alt={result.name || 'Contract'} 
-                          className="h-5 w-5 bg-white rounded-sm absolute -bottom-1 -right-1 object-cover"
+                          className="h-5 w-5 bg-white rounded-[0.3rem] absolute -bottom-0.5 -right-0.5 object-cover"
                         />
                       </div>
                       <div className="flex-1 min-w-0">

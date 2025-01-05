@@ -33,7 +33,7 @@ function ReviewPage({ contractInfo, reviews }: Props) {
     : 0;
 
   return (
-    <div className="container px-4 pt-[6rem]">
+    <div className="container px-8 pt-[6rem]">
       <ReviewHeader
         name={contractInfo.name || 'Unknown Contract'}
         address={contractInfo.address}
@@ -57,7 +57,7 @@ function ReviewPage({ contractInfo, reviews }: Props) {
         emojiStats={stats?.emojiStats}
       />
 
-<div className="w-full space-y-6 -mt-12 items-center">
+<div className="w-full space-y-6 mt-8 items-center">
         {reviews?.length > 0 ? reviews.map((review) => (
           <UserReview
             key={review.id}

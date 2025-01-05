@@ -37,3 +37,26 @@ export function UserReviewPlaceholder() {
     </div>
   );
 }
+
+export function EmojiStatsPlaceholder() {
+  return (
+    <div className="flex flex-col space-y-2 w-full ">
+      <div className="flex items-center space-x-4">
+        <div className="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-3 w-full bg-gray-200 rounded animate-pulse"></div>
+      </div>
+      <div className="flex items-center space-x-4">
+        <div className="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-3 w-11/12 bg-gray-200 rounded animate-pulse"></div>
+      </div>
+      <div className="flex items-center space-x-4">
+        <div className="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-3 w-10/12 bg-gray-200 rounded animate-pulse"></div>
+      </div>
+      <div className="flex items-center space-x-4">
+        <div className="h-4 w-4 bg-gray-200 rounded animate-pulse"></div>
+        <div className="h-3 w-full bg-gray-200 rounded animate-pulse"></div>
+      </div>
+    </div>
+  );
+}

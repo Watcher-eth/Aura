@@ -19,7 +19,7 @@ export default async function Review({ params }: Props) {
 
   const address = getAddress(params.address);
   const contractInfo = await fetchContractMetadata(address, chainId);
-
+console.log("Contract Info:",address, contractInfo);
   if (!contractInfo) {
     notFound();
   }

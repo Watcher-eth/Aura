@@ -33,7 +33,7 @@ function ReviewPage({ contractInfo, reviews }: Props) {
     : 0;
 
   return (
-    <div className="container px-8 pt-[6rem]">
+    <div className="container px-0 pt-[6rem]">
       <ReviewHeader
         name={contractInfo.name || 'Unknown Contract'}
         address={contractInfo.address}
@@ -44,7 +44,8 @@ function ReviewPage({ contractInfo, reviews }: Props) {
         createdAt={contractInfo.createdAt}
         type={contractInfo.type!}
       />
-  <DynamicMiddle
+    <DynamicMiddle
+      contractInfo={contractInfo}
         images={[contractInfo.image || 'https://via.placeholder.com/150']}
       />
 

@@ -16,7 +16,7 @@ const CHAIN_NAMES: { [key: number]: string } = {
   324: "zksync-mainnet"
 };
 
-function getCovalentChainName(chainId: number): string {
+export function getCovalentChainName(chainId: number): string {
   return CHAIN_NAMES[chainId] || `eth-mainnet`;
 }
 
@@ -263,47 +263,80 @@ export async function fetchContractMetadata(address: string, chainId: number) {
     const chainName = getCovalentChainName(chainId);
     const normalizedAddress = getAddress(address);
     
-    // Fetch token metadata
-    const tokenUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${normalizedAddress}/?key=${COVALENT_API_KEY}`;
-    const tokenResponse = await fetch(tokenUrl);
-    const tokenData = await tokenResponse.json();
+    // Get contract type first
+    const contractType = await getContractType(normalizedAddress, chainId);
+    console.log("Contract type:", contractType);
 
-    // Fetch balance data
-    const balanceUrl = `https://api.covalenthq.com/v1/${chainName}/address/${normalizedAddress}/balances_v2/?key=${COVALENT_API_KEY}`;
-    const balanceResponse = await fetch(balanceUrl);
-    const balanceData = await balanceResponse.json();
+    if (contractType === "ERC721" || contractType === "ERC1155") {
+      // For NFTs, use the NFT-specific endpoints
+      const nftUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${normalizedAddress}/nft_token_ids/?key=${COVALENT_API_KEY}`;
+      const nftResponse = await fetch(nftUrl);
+      const nftData = await nftResponse.json();
 
-    // Fetch holders count
-    const holdersUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${normalizedAddress}/token_holders_v2/?key=${COVALENT_API_KEY}`;
-    const holdersResponse = await fetch(holdersUrl);
-    const holdersData = await holdersResponse.json();
+      if (nftResponse.ok && nftData?.data?.items?.length > 0) {
+        // Get collection metadata using the first token
+        const metadataUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${normalizedAddress}/nft_metadata/${nftData.data.items[0].token_id}/?key=${COVALENT_API_KEY}`;
+        const metadataResponse = await fetch(metadataUrl);
+        const metadataData = await metadataResponse.json();
 
-    const tokenInfo = tokenData?.data?.items?.[0];
-    const balanceInfo = balanceData?.data?.items?.find(
-      (item: any) => item.contract_address?.toLowerCase() === normalizedAddress.toLowerCase()
-    );
-    const holdersCount = holdersData?.data?.pagination?.total_count;
+        if (metadataResponse.ok && metadataData?.data?.items?.[0]) {
+          const nftInfo = metadataData.data.items[0];
+          const totalSupply = nftData.data.pagination.total_count;
 
-    if (!tokenInfo && !balanceInfo) {
-      return null;
+          return {
+            address: normalizedAddress,
+            chainId: chainId,
+            name: nftInfo.contract_name || "Unknown NFT Collection",
+            ticker: nftInfo.contract_ticker_symbol || "",
+            type: contractType,
+            image: nftInfo.nft_data?.[0]?.external_data?.image || nftInfo.logo_url,
+            totalSupply,
+            floorPrice: null // Could fetch from another API if needed
+          };
+        }
+      }
+    } else {
+      // For tokens, use the token endpoints
+      const tokenUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${normalizedAddress}/?key=${COVALENT_API_KEY}`;
+      const tokenResponse = await fetch(tokenUrl);
+      const tokenData = await tokenResponse.json();
+
+      // Fetch balance data as backup
+      const balanceUrl = `https://api.covalenthq.com/v1/${chainName}/address/${normalizedAddress}/balances_v2/?key=${COVALENT_API_KEY}`;
+      const balanceResponse = await fetch(balanceUrl);
+      const balanceData = await balanceResponse.json();
+
+      // Fetch holders count
+      const holdersUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${normalizedAddress}/token_holders_v2/?key=${COVALENT_API_KEY}`;
+      const holdersResponse = await fetch(holdersUrl);
+      const holdersData = await holdersResponse.json();
+
+      const tokenInfo = tokenData?.data?.items?.[0];
+      const balanceInfo = balanceData?.data?.items?.find(
+        (item: any) => item.contract_address?.toLowerCase() === normalizedAddress.toLowerCase()
+      );
+      const holdersCount = holdersData?.data?.pagination?.total_count;
+
+      if (!tokenInfo && !balanceInfo) {
+        return null;
+      }
+
+      const info = tokenInfo || balanceInfo;
+      
+      return {
+        address: normalizedAddress,
+        chainId: chainId,
+        name: info?.contract_name || "Unknown Contract",
+        ticker: info?.contract_ticker_symbol || "",
+        type: contractType,
+        image: info?.logo_url || null,
+        totalSupply: info?.total_supply,
+        holders: holdersCount,
+        marketCap: info?.market_cap_usd || info?.quote_rate || null
+      };
     }
 
-    const info = tokenInfo || balanceInfo;
-    
-    // Get contract type from Etherscan
-    const contractType = await getContractType(normalizedAddress, chainId);
-    
-    return {
-      address: normalizedAddress,
-      chainId: chainId,
-      name: info?.contract_name || "Unknown Contract",
-      ticker: info?.contract_ticker_symbol || "",
-      type: contractType,
-      image: info?.logo_url,
-      marketCap: info?.market_cap_usd || info?.quote_rate,
-      holders: holdersCount || info?.total_supply,
-      createdAt: new Date().toISOString()
-    };
+    return null;
   } catch (error) {
     console.error("Error fetching contract metadata:", error);
     return null;

@@ -16,7 +16,7 @@ const ReusableDialog: React.FC<ReusableDialogProps> = ({ trigger, children }) =>
   return (
     <Dialog >
       <DialogTrigger>{trigger}</DialogTrigger>
-      <DialogContent className='bg-[#efefef] p-1.5  rounded-[1.5rem] border-2 border-[#ededed]  overflow-hidden'>
+      <DialogContent className='bg-[#ababab]/[15%] backdrop-blur-2xl p-2  rounded-[1.5rem] border-[0.1rem] border-[#ababab]  overflow-hidden'>
         <div className='bg-white rounded-[1.5rem] p-5 border-2 border-[#dedede]  overflow-hidden'>
       <AnimatePresence >
       <motion.div

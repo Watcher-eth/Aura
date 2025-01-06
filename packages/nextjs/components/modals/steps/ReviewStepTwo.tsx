@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from 'react';
-import { HelpingHand, X } from 'lucide-react';
+import { AArrowUp, HelpingHand, Star, X } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 import { useReview } from '../context/ReviewContext';
 
@@ -12,11 +12,11 @@ interface Emotion {
 }
 
 const emotions: Emotion[] = [
-  { emoji: "😢", label: "Very Sad" },
-  { emoji: "😔", label: "Sad" },
-  { emoji: "😐", label: "Medium" },
-  { emoji: "🙂", label: "Happy" },
-  { emoji: "😊", label: "Very Happy" },
+  { emoji: "😢", label: "Bad" },
+  { emoji: "😔", label: "Eeeh" },
+  { emoji: "😐", label: "Mid" },
+  { emoji: "🙂", label: "Good" },
+  { emoji: "😊", label: "Incredible" },
 ];
 
 const emotionGradients = [
@@ -30,49 +30,54 @@ const emotionGradients = [
 interface ReviewStepTwoProps {
   onBack: () => void;
   onSubmit: () => void;
+  address: string;
 }
 
-const ReviewStepTwo: React.FC<ReviewStepTwoProps> = ({ onBack, onSubmit }) => {
-  const [selectedEmotion, setSelectedEmotion] = useState<number | null>(2);
-  const { selectedEmotions, comment, setComment, submitReview } = useReview();
+const ReviewStepTwo: React.FC<ReviewStepTwoProps> = ({ onBack, onSubmit, address }) => {
+  const { selectedEmotions, comment, setComment, submitReview, setRating, rating } = useReview();
+  
+  console.log("Step Two - Selected Emotions:", selectedEmotions);
 
   const handleSubmit = async () => {
     try {
+      console.log("Submitting review with emotions:", selectedEmotions);
       await submitReview();
+      console.log('Review submitted successfully');
       onSubmit();
     } catch (error) {
       console.error('Error submitting review:', error);
+      // You could add a toast or notification here to show the error
     }
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="rounded-full bg-white border-[0.15rem] border-[#eeeeee] p-2">
-          <HelpingHand className='text-[#999999]'/>
+      <div className="flex items-center gap-1.5">
+          <div className="rounded-full bg-white  ">
+            <Star size={18} strokeWidth={2.8}  className='text-[#808080]'/>
           </div>
-          <h2 className="text-xl text-[#999999] font-semibold">Leave a Review</h2>
+          <h2 className="text-lg text-[#808080] font-medium">Review</h2>
         </div>
       </div>
 
       <div className="text-center">
-        <h2 className="text-[2rem] font-semibold">How was your experience with</h2>
-        <p className="mt-2 text-muted-foreground text-[1.3rem]">
-        0x16859...49B363d        </p>
+        <h2 className="text-[1.7rem] mt-3 font-semibold">How was your Experience</h2>
+        <p className=" text-muted-foreground text-[1.1rem]">
+        {address}        </p>
       </div>
-<div className='relative pb-6 mt-1'>
+<div className='relative pb-6 '>
       <div className="flex justify-center gap-8 z-[0] py-8">
         {emotions.map((emotion, index) => (
           <motion.button
             key={index}
             className="relative"
-            onClick={() => setSelectedEmotion(index)}
+            onClick={() => setRating(index)}
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
           >
             <AnimatePresence>
-              {selectedEmotion === index && (
+              {rating === index && (
                 <motion.div
                   className={`absolute -inset-4 rounded-full bg-gradient-to-b ${emotionGradients[index]}`}
                   initial={{ opacity: 0, scale: 0.8 }}
@@ -83,9 +88,9 @@ const ReviewStepTwo: React.FC<ReviewStepTwoProps> = ({ onBack, onSubmit }) => {
             </AnimatePresence>
             <motion.div
               className={`relative z-10 flex h-14 w-14 items-center justify-center rounded-full bg-gray-100 text-[2rem]
-                ${selectedEmotion === index ? "bg-transparent" : ""}`}
+                ${rating === index ? "bg-transparent" : ""}`}
               animate={{
-                scale: selectedEmotion === index ? 1.45 : 1,
+                scale: rating === index ? 1.45 : 1,
               }}
             >
               {emotion.emoji}
@@ -94,14 +99,14 @@ const ReviewStepTwo: React.FC<ReviewStepTwoProps> = ({ onBack, onSubmit }) => {
         ))}
       </div>
 
-      {selectedEmotion !== null && (
+      {rating !== undefined && (
         <motion.div
           className="flex justify-center z-[20] -mt-3 "
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
         >
           <div className="rounded-full bg-gray-900 px-4 py-1 text-sm text-white">
-            {emotions[selectedEmotion].label}
+            {emotions[rating].label}
           </div>
         </motion.div>
       )}

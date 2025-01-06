@@ -20,6 +20,7 @@
     "@heroicons/react": "~2.1.5",
     "@lens-network/sdk": "canary",
     "@lens-protocol/client": "canary",
+    "@lens-protocol/storage-node-client": "next",
     "@number-flow/react": "^0.5.1",
     "@radix-ui/react-avatar": "^1.1.2",
     "@radix-ui/react-dialog": "^1.1.4",

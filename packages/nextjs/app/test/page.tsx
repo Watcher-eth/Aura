@@ -3,6 +3,7 @@ import ReviewModal from '~~/components/modals/ReviewModal';
 interface Props {
   params: {
     id: string;
+    name: string;
   };
 }
 
@@ -14,6 +15,7 @@ export default async function ReviewPage({ params }: Props) {
         <p className="text-gray-600">This contract could not be found.</p>
         <div className="flex justify-end mt-4">
           <ReviewModal 
+            name={params.name}
             trigger={
               <button className="bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700">
                 Give Feedback

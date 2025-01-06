@@ -1,9 +1,6 @@
 import { Calendar, Plus, StarIcon } from 'lucide-react';
 import React from 'react';
-import { Avatar, AvatarFallback, AvatarImage } from "~~/components/ui/avatar";
 import { getChainLogo } from '~~/utils/chainLogos';
-import { type review } from "~~/lib/types/generated/schema.graphql";
-import ReviewModal from '../modals/ReviewModal';
 
 interface ReviewHeaderProps {
   name?: string;

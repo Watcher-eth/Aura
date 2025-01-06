@@ -74,6 +74,7 @@ function ReviewPage({ contractInfo, reviews }: Props) {
           <p className="text-gray-600 mt-2 text-lg">Be the first to review this contract</p>
           <div className="flex justify-end mt-4 mb-20">
             <ReviewModal
+              name={contractInfo.name ?? contractInfo.address}
               trigger={
                 <button className='px-4 py-1.5 rounded-md border-2 border-[#ededed] bg-[white]'>
                   Write a Review

@@ -2,11 +2,12 @@
 
 import React from 'react';
 import { motion, AnimatePresence } from "framer-motion";
-import { HelpingHand, Check } from 'lucide-react';
+import { HelpingHand, Check, ArrowUp, AArrowDown, AArrowUp } from 'lucide-react';
 import { useReview } from '../context/ReviewContext';
 
 interface ReviewStepOneProps {
   onNext: () => void;
+  address: string
 }
 
 interface Emotion {
@@ -32,36 +33,37 @@ export const emotions: Emotion[] = [
   { emoji: "💸", label: "Airdrop" }
 ];
 
-const ReviewStepOne: React.FC<ReviewStepOneProps> = ({ onNext }) => {
+const ReviewStepOne: React.FC<ReviewStepOneProps> = ({ onNext, address }) => {
   const { selectedEmotions, setSelectedEmotions } = useReview();
 
   const handleEmotionClick = (index: number) => {
+    console.log("Clicking emotion at index:", index);
     setSelectedEmotions(prev => {
-      if (prev.includes(index)) {
-        return prev.filter(i => i !== index);
-      }
-      if (prev.length >= 3) {
-        return prev;
-      }
-      return [...prev, index];
+      const newEmotions = prev.includes(index)
+        ? prev.filter(i => i !== index)
+        : prev.length >= 3
+        ? prev
+        : [...prev, index];
+      console.log("Previous emotions:", prev, "New emotions:", newEmotions);
+      return newEmotions;
     });
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="rounded-full bg-white border-[0.15rem] border-[#eeeeee] p-2">
-            <HelpingHand className='text-[#999999]'/>
+        <div className="flex items-center gap-1.5">
+          <div className="rounded-full bg-white  ">
+            <AArrowUp className='text-[#808080]'/>
           </div>
-          <h2 className="text-xl text-[#999999] font-semibold">Vibe Check</h2>
+          <h2 className="text-lg text-[#808080] font-medium">Vibe Check</h2>
         </div>
       </div>
 
       <div className="text-center">
         <h2 className="text-[2rem] font-semibold">Choose up to 3</h2>
         <p className="mt-2 text-muted-foreground text-[1.3rem]">
-          0x16859...49B363d
+          {address}
         </p>
       </div>
 

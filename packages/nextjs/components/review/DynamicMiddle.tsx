@@ -82,7 +82,7 @@ const ERC20Chart = ({ contractInfo }: { contractInfo: ContractInfo }) => {
     <div className="w-full py-6 pt-4 flex flex-col">
       	  <NumberFlowGroup>
       <div className="flex self-end items-baseline gap-2 mb-6">
-        <span className={`text-xl font-semibold ${isPositive ? 'text-[#00FF85]' : 'text-red-500'}`}>
+        <span className={`text-lg font-semibold ${isPositive ? 'text-[#00FF85]' : 'text-red-500'}`}>
           {isPositive ? '↑' : '↓'} <NumberFlow value={Math.abs(priceChange)} format={{ minimumFractionDigits: 2, maximumFractionDigits: 2 }} />%
         </span>
         <h2 className="text-4xl font-bold">
@@ -93,7 +93,7 @@ const ERC20Chart = ({ contractInfo }: { contractInfo: ContractInfo }) => {
         </h2>
       </div></NumberFlowGroup>
 
-      <div className="h-[35ch] -mt-2">
+      <div className="h-[35ch] -mt-4">
         <ChartContainer className="w-full h-full" config={chartConfig}>
           <RechartsPrimitive.ResponsiveContainer width="100%" height="100%">
             <RechartsPrimitive.LineChart 

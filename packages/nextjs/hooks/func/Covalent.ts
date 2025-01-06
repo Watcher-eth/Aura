@@ -85,157 +85,110 @@ async function getContractMetadata(address: string, chainId: number, contractTyp
     // Helper function to fetch and handle JSON responses
     const fetchJson = async (url: string) => {
       try {
-        const response = await fetch(url);
+        const response = await fetch(url, {
+          headers: {
+            'Accept': 'application/json'
+          }
+        });
         if (!response.ok) {
           console.log(`Failed to fetch ${url}:`, response.status);
           return null;
         }
-        const data = await response.json();
-        return data;
+        return await response.json();
       } catch (error) {
         console.error("Error fetching:", url, error);
         return null;
       }
     };
 
-    // Start with balances endpoint as it's most reliable
-    const basicUrl = `https://api.covalenthq.com/v1/${chainName}/address/${address}/balances_v2/?key=${COVALENT_API_KEY}`;
-    const basicData = await fetchJson(basicUrl);
-    
-    // Find this token in the balances
-    const basicInfo = basicData?.data?.items?.find(
-      (item: any) => item.contract_address?.toLowerCase() === address.toLowerCase()
-    );
+    // For ERC20 tokens, try multiple endpoints in parallel
+    const [tokenData, priceData] = await Promise.all([
+      fetchJson(`https://api.covalenthq.com/v1/${chainName}/tokens/${address}/token_holders_v2/?key=${COVALENT_API_KEY}`),
+      fetchJson(`https://api.covalenthq.com/v1/pricing/historical_by_addresses_v2/${chainName}/USD/${address}/?key=${COVALENT_API_KEY}`)
+    ]);
 
-    // If we found the token in balances, we have good metadata
-    if (basicInfo) {
-      console.log("Found token in balances:", basicInfo);
+    // First check token data from holders endpoint
+    if (tokenData?.data?.items?.[0]) {
+      const info = tokenData.data.items[0];
+      console.log("Found token in holders data:", info);
       return {
-        contract_name: basicInfo.contract_name,
-        contract_ticker_symbol: basicInfo.contract_ticker_symbol,
-        logo_url: basicInfo.logo_url,
-        total_supply: basicInfo.total_supply,
-        total_count: basicInfo.total_supply,
-        quote_rate: basicInfo.quote_rate,
+        contract_name: info.contract_name,
+        contract_ticker_symbol: info.contract_ticker_symbol,
+        logo_url: info.logo_url,
+        total_supply: info.total_supply,
+        total_count: tokenData.data.pagination.total_count,
+        quote_rate: info.quote_rate || 0,
         floor_price_quote: null
       };
     }
 
-    // Try the token endpoint next
-    const tokenUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${address}/?key=${COVALENT_API_KEY}`;
-    const tokenData = await fetchJson(tokenUrl);
-    const tokenInfo = tokenData?.data?.items?.[0];
-
-    if (tokenInfo) {
-      console.log("Found token info:", tokenInfo);
+    // Check price data
+    if (priceData?.data?.[0]?.items?.[0]) {
+      const info = priceData.data[0].items[0];
+      console.log("Found token in price data:", info);
       return {
-        contract_name: tokenInfo.contract_name,
-        contract_ticker_symbol: tokenInfo.contract_ticker_symbol,
-        logo_url: tokenInfo.logo_url,
-        total_supply: tokenInfo.total_supply,
-        total_count: tokenInfo.total_supply,
-        quote_rate: tokenInfo.quote_rate,
+        contract_name: info.contract_name || `${contractType} Token`,
+        contract_ticker_symbol: info.contract_ticker_symbol || "",
+        logo_url: info.logo_url,
+        total_supply: info.total_supply || 0,
+        total_count: info.total_supply || 0,
+        quote_rate: info.price || 0,
         floor_price_quote: null
       };
     }
 
-    // If still no data, try the holders endpoint
-    const holdersUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${address}/token_holders_v2/?key=${COVALENT_API_KEY}&page-size=1000`;
-    const holdersData = await fetchJson(holdersUrl);
-    const holdersCount = holdersData?.data?.pagination?.total_count || 0;
+    // If it's an NFT, try NFT-specific endpoints
+    if (contractType === "ERC721" || contractType === "ERC1155") {
+      const nftData = await fetchJson(
+        `https://api.covalenthq.com/v1/${chainName}/tokens/${address}/nft_token_ids/?key=${COVALENT_API_KEY}`
+      );
 
-    // For NFTs, try to get additional metadata
-    if ((contractType === "ERC721" || contractType === "ERC1155") && holdersCount > 0) {
-      const nftUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${address}/nft_token_ids/?key=${COVALENT_API_KEY}`;
-      const nftData = await fetchJson(nftUrl);
-      
-      if (nftData?.data?.items?.length > 0) {
-        const nftInfo = nftData.data.items[0];
-        return {
-          contract_name: nftInfo.contract_name || "NFT Collection",
-          contract_ticker_symbol: nftInfo.contract_ticker_symbol || "",
-          logo_url: nftInfo.nft_data?.[0]?.external_data?.image || nftInfo.logo_url,
-          total_supply: nftData.data.pagination.total_count,
-          total_count: holdersCount,
-          quote_rate: 0,
-          floor_price_quote: null
-        };
+      if (nftData?.data?.items?.[0]) {
+        const tokenId = nftData.data.items[0].token_id;
+        const metadataData = await fetchJson(
+          `https://api.covalenthq.com/v1/${chainName}/tokens/${address}/nft_metadata/${tokenId}/?key=${COVALENT_API_KEY}`
+        );
+
+        if (metadataData?.data?.items?.[0]) {
+          const nftInfo = metadataData.data.items[0];
+          console.log("Found NFT metadata:", nftInfo);
+          return {
+            contract_name: nftInfo.contract_name,
+            contract_ticker_symbol: nftInfo.contract_ticker_symbol,
+            logo_url: nftInfo.nft_data?.[0]?.external_data?.image || nftInfo.logo_url,
+            total_supply: nftData.data.pagination.total_count,
+            total_count: tokenData?.data?.pagination?.total_count || 0,
+            quote_rate: 0,
+            floor_price_quote: null
+          };
+        }
       }
     }
 
-    // If we have holders data but no other info
-    if (holdersCount > 0) {
-      // Try to get price data
-      const priceUrl = `https://api.covalenthq.com/v1/pricing/historical_by_addresses_v2/${chainName}/USD/${address}/?key=${COVALENT_API_KEY}`;
-      const priceData = await fetchJson(priceUrl);
-      const latestPrice = priceData?.data?.[0]?.items?.[0]?.price || 0;
+    // Try one last time with token metadata
+    const metadataData = await fetchJson(
+      `https://api.covalenthq.com/v1/${chainName}/tokens/${address}/metadata/?key=${COVALENT_API_KEY}`
+    );
 
+    if (metadataData?.data?.items?.[0]) {
+      const info = metadataData.data.items[0];
+      console.log("Found token in metadata:", info);
       return {
-        contract_name: `${contractType} Token`,
-        contract_ticker_symbol: "",
-        logo_url: null,
-        total_supply: holdersCount,
-        total_count: holdersCount,
-        quote_rate: latestPrice,
+        contract_name: info.contract_name,
+        contract_ticker_symbol: info.contract_ticker_symbol,
+        logo_url: info.logo_url,
+        total_supply: info.total_supply,
+        total_count: info.total_supply,
+        quote_rate: info.quote_rate || 0,
         floor_price_quote: null
       };
     }
 
+    console.log("No metadata found for token");
     return null;
   } catch (error) {
     console.error("Error in getContractMetadata:", error);
     return null;
-  }
-}
-
-export async function* searchContractsStream(query: string): AsyncGenerator<SearchResult, void, unknown> {
-  if (!isAddress(query)) {
-    console.log("Not a valid address, skipping search");
-    return;
-  }
-
-  const address = getAddress(query);
-  const promises = SUPPORTED_CHAINS.map(async (chainId) => {
-    try {
-      const contractType = await getContractType(address, chainId);
-      if (contractType === "Unknown") return null;
-
-      const metadata = await getContractMetadata(address, chainId, contractType);
-      if (!metadata) return null;
-
-      return {
-        address: address,
-        chain: chainId,
-        name: metadata.contract_name || "Unknown Contract",
-        ticker: metadata.contract_ticker_symbol || "",
-        type: contractType,
-        image: metadata.logo_url || null,
-        marketCap: metadata.quote_rate || metadata.floor_price_quote || 0,
-        holders: metadata.total_supply || metadata.total_count
-      };
-    } catch (error) {
-      console.error(`Error fetching data for chain ${chainId}:`, error);
-      return null;
-    }
-  });
-
-  // Create an array to track which promises are still pending
-  const pending = promises.map((_, index) => index);
-  
-  while (pending.length > 0) {
-    const result = await Promise.race(
-      pending.map(async (index) => {
-        const result = await promises[index];
-        return { index, result };
-      })
-    );
-    
-    // Remove the completed promise from pending
-    pending.splice(pending.indexOf(result.index), 1);
-    
-    if (result.result) {
-      yield result.result;
-    }
   }
 }
 
@@ -246,63 +199,52 @@ export async function searchContracts(query: string): Promise<SearchResult[]> {
   }
 
   const address = getAddress(query);
-  const results: SearchResult[] = [];
-  const pendingChains = [...SUPPORTED_CHAINS];
+  
+  // Get contract types for all chains in parallel
+  const contractTypePromises = SUPPORTED_CHAINS.map(async chainId => {
+    try {
+      const contractType = await getContractType(address, chainId);
+      return { chainId, contractType };
+    } catch (error) {
+      console.error(`Error getting contract type for chain ${chainId}:`, error);
+      return { chainId, contractType: "Unknown" };
+    }
+  });
 
-  // Process chains in parallel but collect results as they come in
-  while (pendingChains.length > 0) {
-    const chainPromises = pendingChains.map(async chainId => {
-      try {
-        const contractType = await getContractType(address, chainId);
-        if (contractType === "Unknown") return { chainId, result: null };
+  const contractTypes = await Promise.all(contractTypePromises);
+  const validChains = contractTypes.filter(({ contractType }) => contractType !== "Unknown");
 
-        const metadata = await getContractMetadata(address, chainId, contractType);
-        if (!metadata) return { chainId, result: null };
-
+  // Fetch metadata for all valid chains in parallel
+  const metadataPromises = validChains.map(async ({ chainId, contractType }) => {
+    try {
+      const metadata = await getContractMetadata(address, chainId, contractType);
+      if (metadata) {
         const result = {
-          address: address,
           chain: chainId,
+          address,
           name: metadata.contract_name || "Unknown Contract",
           ticker: metadata.contract_ticker_symbol || "",
           type: contractType,
           image: metadata.logo_url || null,
           marketCap: metadata.quote_rate || metadata.floor_price_quote || 0,
-          holders: metadata.total_supply || metadata.total_count
+          holders: metadata.total_supply || metadata.total_count || 0
         };
-        
-        console.log("Chain", chainId, "result:", result);
-        return { chainId, result };
-      } catch (error) {
-        console.error(`Error fetching data for chain ${chainId}:`, error);
-        return { chainId, result: null };
-      }
-    });
-
-    try {
-      // Wait for any chain to complete
-      const responses = await Promise.all(chainPromises);
-      
-      // Process all successful responses
-      for (const { chainId, result } of responses) {
-        // Remove this chain from pending
-        const index = pendingChains.indexOf(chainId);
-        if (index > -1) {
-          pendingChains.splice(index, 1);
-        }
-
-        // Add valid result to results array
-        if (result) {
-          console.log("Adding result from chain", chainId, ":", result);
-          results.push(result);
-        }
+        console.log(`Found token on chain ${chainId}:`, result);
+        return result;
       }
     } catch (error) {
-      console.error("Error processing chain results:", error);
+      console.error(`Error fetching metadata for chain ${chainId}:`, error);
     }
-  }
+    return null;
+  });
 
-  console.log("Final results:", results);
-  return results;
+  const metadataResults = await Promise.all(metadataPromises);
+  const validResults = metadataResults.filter((result): result is SearchResult => 
+    result !== null && result.name !== "Unknown Contract"
+  );
+
+  console.log("Final results:", validResults);
+  return validResults;
 }
 
 export async function fetchContractMetadata(address: string, chainId: number) {
@@ -341,6 +283,8 @@ export async function fetchContractMetadata(address: string, chainId: number) {
     console.log("Price Data:", priceData);
 
     const latestPrice = priceData?.data?.[0]?.items?.[0]?.price || 0;
+    // Extract token info from price data if available
+    const priceTokenInfo = priceData?.data?.[0];
 
     // Determine the actual contract type
     const detectedType = (contractType === "Custom" && holdersCount > 0 && latestPrice > 0) 
@@ -412,8 +356,8 @@ export async function fetchContractMetadata(address: string, chainId: number) {
         (item: any) => item.contract_address?.toLowerCase() === normalizedAddress.toLowerCase()
       );
 
-      // Get contract info from any available source
-      const info = tokenData?.data?.items?.[0] || balanceInfo;
+      // Get contract info from any available source, prioritizing price data
+      const info = priceTokenInfo || tokenData?.data?.items?.[0] || balanceInfo;
   
       // Even if we don't have token info, return basic contract data
       return {
@@ -422,7 +366,7 @@ export async function fetchContractMetadata(address: string, chainId: number) {
         name: info?.contract_name || "Unknown Contract",
         ticker: info?.contract_ticker_symbol || "",
         type: detectedType,
-        image: info?.logo_url || null,
+        image: info?.logo_url || info?.logo_urls?.["256"] || null,
         totalSupply: info?.total_supply,
         holders: holdersCount,
         marketCap: latestPrice,
@@ -434,5 +378,56 @@ export async function fetchContractMetadata(address: string, chainId: number) {
   } catch (error) {
     console.error("Error fetching contract metadata:", error);
     return null;
+  }
+}
+
+export async function* searchContractsStream(query: string): AsyncGenerator<SearchResult, void, unknown> {
+  if (!isAddress(query)) {
+    console.log("Not a valid address, skipping search");
+    return;
+  }
+
+  const address = getAddress(query);
+  const promises = SUPPORTED_CHAINS.map(async (chainId) => {
+    try {
+      const contractType = await getContractType(address, chainId);
+      if (contractType === "Unknown") return null;
+
+      const metadata = await getContractMetadata(address, chainId, contractType);
+      if (!metadata) return null;
+
+      return {
+        address: address,
+        chain: chainId,
+        name: metadata.contract_name || "Unknown Contract",
+        ticker: metadata.contract_ticker_symbol || "",
+        type: contractType,
+        image: metadata.logo_url || metadata.nft_data?.[0]?.external_data?.image,
+        marketCap: metadata.quote_rate || metadata.floor_price_quote || 0,
+        holders: metadata.total_supply || metadata.total_count
+      };
+    } catch (error) {
+      console.error(`Error fetching data for chain ${chainId}:`, error);
+      return null;
+    }
+  });
+
+  // Create an array to track which promises are still pending
+  const pending = promises.map((_, index) => index);
+  
+  while (pending.length > 0) {
+    const result = await Promise.race(
+      pending.map(async (index) => {
+        const result = await promises[index];
+        return { index, result };
+      })
+    );
+    
+    // Remove the completed promise from pending
+    pending.splice(pending.indexOf(result.index), 1);
+    
+    if (result.result) {
+      yield result.result;
+    }
   }
 }

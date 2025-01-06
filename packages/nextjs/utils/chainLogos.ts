@@ -34,6 +34,6 @@ export const chainLogos: ChainLogos = {
 };
 
 export function getChainLogo(chainId: string | number): string {
-  const id = chainId.toString();
+  const id = chainId?.toString();
   return chainLogos[id] || "https://mir-s3-cdn-cf.behance.net/project_modules/max_1200/27352611367183.562fb2319bbe5.jpg";
 }

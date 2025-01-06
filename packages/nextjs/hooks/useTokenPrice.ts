@@ -71,7 +71,7 @@ async function fetchPriceData(address: string, chainId: number): Promise<PriceDa
       day: 'numeric'
     }),
     price: Number(item.price)
-  })).filter(item => !isNaN(item.price));
+  }))
 
   console.log('Transformed prices:', prices);
 

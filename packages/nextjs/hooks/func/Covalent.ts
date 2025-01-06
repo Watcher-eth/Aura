@@ -286,7 +286,13 @@ export async function fetchContractMetadata(address: string, chainId: number) {
       const floorPriceData = await fetchWithContentCheck(floorPriceUrl);
       console.log("Floor Price Data:", floorPriceData);
 
+      // Get NFT holders count
+      const holdersUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${normalizedAddress}/token_holders_v2/?key=${COVALENT_API_KEY}&page-size=1000`;
+      const holdersData = await fetchWithContentCheck(holdersUrl);
+      console.log("NFT Holders Data:", holdersData);
+
       const floorPrice = floorPriceData?.data?.items?.[0]?.floor_price_quote || 0;
+      const holdersCount = holdersData?.data?.pagination?.total_count || 0;
 
       if (nftData?.data?.items?.length > 0) {
         // Get collection metadata using the first token
@@ -296,7 +302,7 @@ export async function fetchContractMetadata(address: string, chainId: number) {
         if (metadataData?.data?.items?.[0]) {
           const nftInfo = metadataData.data.items[0];
           const totalSupply = nftData.data.pagination.total_count;
-
+          
           return {
             address: normalizedAddress,
             chainId: chainId,
@@ -305,32 +311,24 @@ export async function fetchContractMetadata(address: string, chainId: number) {
             type: contractType,
             image: nftInfo.nft_data?.[0]?.external_data?.image || nftInfo.logo_url,
             totalSupply,
-            holders: nftData.data.pagination.total_count,
-            marketCap: floorPrice, // For NFTs, use floor price as marketCap
+            holders: holdersCount,
+            marketCap: floorPrice,
             createdAt: new Date().toISOString()
           };
         }
       }
     } else {
-      // For tokens, use the token endpoints
+      // For ERC20 tokens
       const tokenUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${normalizedAddress}/?key=${COVALENT_API_KEY}`;
       const tokenData = await fetchWithContentCheck(tokenUrl);
-      console.log("TokenData", tokenData);
-
-      // Fetch balance data as backup
-      const balanceUrl = `https://api.covalenthq.com/v1/${chainName}/address/${normalizedAddress}/balances_v2/?key=${COVALENT_API_KEY}`;
-      const balanceData = await fetchWithContentCheck(balanceUrl);
-      console.log("Balance", balanceData);
-
-      // Find token info in balance data if token endpoint failed
-      const balanceInfo = balanceData?.data?.items?.find(
-        (item: any) => item.contract_address?.toLowerCase() === normalizedAddress.toLowerCase()
-      );
+      console.log("Token Data:", tokenData);
 
       // Fetch holders count
-      const holdersUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${normalizedAddress}/token_holders_v2/?key=${COVALENT_API_KEY}`;
+      const holdersUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${normalizedAddress}/token_holders_v2/?key=${COVALENT_API_KEY}&page-size=1000`;
       const holdersData = await fetchWithContentCheck(holdersUrl);
-      console.log("Holders", holdersData);
+      console.log("Token Holders Data:", holdersData);
+
+      const holdersCount = holdersData?.data?.pagination?.total_count || 0;
 
       // Get market data
       const priceUrl = `https://api.covalenthq.com/v1/pricing/historical_by_addresses_v2/${chainName}/USD/${normalizedAddress}/`;
@@ -338,9 +336,9 @@ export async function fetchContractMetadata(address: string, chainId: number) {
       const priceData = await priceResponse.json();
       const latestPrice = priceData?.data?.[0]?.items?.[0]?.price || 0;
 
-      const info = tokenData?.data?.items?.[0] || balanceInfo;
+      const info = tokenData?.data?.items?.[0];
       if (!info) {
-        console.error('No token info found in either token or balance data');
+        console.error('No token info found');
         return null;
       }
 
@@ -352,7 +350,7 @@ export async function fetchContractMetadata(address: string, chainId: number) {
         type: contractType,
         image: info.logo_url || null,
         totalSupply: info.total_supply,
-        holders: holdersData?.data?.pagination?.total_count,
+        holders: holdersCount,
         marketCap: latestPrice,
         createdAt: new Date().toISOString()
       };

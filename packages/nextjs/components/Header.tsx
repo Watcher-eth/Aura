@@ -71,7 +71,7 @@ export const Header = () => {
   );
 
   return (
-    <div className="fixed top-0 w-full navbar min-h-0 flex-shrink-0 justify-between z-50  -mt-7  px-12 sm:px-2    mx-1.5 mt-3">
+    <div className="fixed top-0 w-full navbar min-h-0 flex-shrink-0 justify-between z-50  -mt-7  px-20 sm:px-7    mx-1.5 mt-3">
       <div className="navbar-start w-auto lg:w-1/2">
       
         <Link href="/" passHref className="hidden lg:flex items-center gap-2 -ml-6 mr-3 -mt-2.5 rounded-lg shrink-0">

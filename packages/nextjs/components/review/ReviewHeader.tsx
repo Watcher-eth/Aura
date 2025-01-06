@@ -87,7 +87,7 @@ function ReviewHeader({
             </div>
             <div className="flex items-center space-x-2">
               <span className="px-2 py-1 bg-[#fefefe] border-[0.1rem] border-[#ededed] flex items-center rounded-full text-sm"><Calendar color='#aaaaaa' className='mr-1' size={14}/><div>{formatDate(createdAt)}</div></span>
-              <span className="px-2 py-1 bg-[#fefefe] border-[0.1rem] border-[#ededed] rounded-full text-sm">{type}</span>
+              <span className={`px-2 py-1 ${type === "ERC20" ? "bg-[#1F75FE]/10 border-[0.1rem] border-[#1F75FE] text-[#1F75FE]" :  type === "ERC721" ? "bg-[#FF007F]/10 border-[0.1rem] border-[#FF007F] text-[#FF007F]" : "bg-[#FF7518]/10 border-[0.1rem] border-[#FF7518] text-[#FF7518]"} rounded-full text-sm`}>{type}</span>
             </div>
             <div className="flex items-center space-x-1 mt-1">
               {verified && (
@@ -96,7 +96,7 @@ function ReviewHeader({
                 </span>
               )}
               {contractType && (
-                <span className="text-sm bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">
+                <span className={`text-sm bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full`}>
                   {contractType}
                 </span>
               )}

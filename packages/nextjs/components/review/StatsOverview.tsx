@@ -12,11 +12,24 @@ import {
 } from 'recharts';
 import { Card } from '~~/components/ui/card';
 import { EmojiStatsPlaceholder } from './UserReviewPlaceholder';
+import NumberFlow from '@number-flow/react';
+
+interface ContractInfo {
+  address: string;
+  chainId: number;
+  name: string;
+  ticker?: string;
+  type?: string;
+  image?: string;
+  marketCap?: number;
+  holders?: number;
+  createdAt: string;
+}
 
 interface StatsOverviewProps {
   totalReviews: number;
   holders: number;
-  marketCap: string;
+  contractInfo: {type: string, marketCap: number, holders: number};
   emojiStats: Array<{
     emoji: string;
     count: number;
@@ -35,12 +48,23 @@ function formatNumber(num: string | number): string {
   return n.toString();
 }
 
+const formatPrice = (price: number) => {
+  if (price === 0) return '0.00';
+  if (price < 0.0001) return price.toExponential(2);
+  if (price < 1) return price.toFixed(6);
+  if (price < 10) return price.toFixed(4);
+  if (price < 100) return price.toFixed(3);
+  return price.toFixed(2);
+};
+
 export default function StatsOverview({
   totalReviews = 0,
   holders = 0,
-  marketCap = "N/A",
+  contractInfo,
   emojiStats = [],
 }: StatsOverviewProps) {
+  const { marketCap, type } = contractInfo;
+
   const data = emojiStats.map((stat) => ({
     name: stat.emoji,
     value: stat.count,
@@ -55,7 +79,7 @@ export default function StatsOverview({
           <span className="text-md font-medium text-muted-foreground">
             Total Reviews
           </span>
-          <span className="text-[2rem] font-bold">{formatNumber(totalReviews)}</span>
+          <span className="text-[2rem] font-bold">{totalReviews}</span>
           <span className="text-sm  text-muted-foreground">
             Updated 10min ago
           </span>
@@ -64,16 +88,24 @@ export default function StatsOverview({
           <span className="text-md font-medium text-muted-foreground">
             Holders
           </span>
-          <span className="text-[2rem] font-bold">{formatNumber(holders)}</span>
+          <span className="text-[2rem] font-bold">{holders}</span>
           <span className="text-sm  text-muted-foreground">
           Updated daily
           </span>
         </div>
         <div className="flex flex-col">
           <span className="text-md font-medium text-muted-foreground">
-            Current Price
+            {contractInfo?.type === "ERC721" || contractInfo?.type === "ERC1155" ? "Floor Price" : "Current Price"}
           </span>
-          <span className="text-[2rem] font-bold">${marketCap}</span>
+          <span className="text-[2rem] font-bold">
+            $<NumberFlow 
+              value={contractInfo?.marketCap || 0} 
+              format={{ 
+                minimumFractionDigits: 2,
+                maximumFractionDigits: (contractInfo?.marketCap || 0) < 1 ? 6 : 2
+              }}
+            />
+          </span>
           <span className="text-sm  text-muted-foreground">
           Updated hourly  
           </span>

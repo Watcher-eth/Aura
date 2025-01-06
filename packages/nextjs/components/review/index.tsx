@@ -32,6 +32,7 @@ function ReviewPage({ contractInfo, reviews }: Props) {
     ? reviews?.reduce((sum, review) => sum + review.rating, 0) / reviews.length
     : 0;
 
+  console.log("Contrac:", contractInfo);
   return (
     <div className="container px-0 pt-[6rem]">
       <ReviewHeader
@@ -45,6 +46,7 @@ function ReviewPage({ contractInfo, reviews }: Props) {
         type={contractInfo.type!}
       />
     <DynamicMiddle
+    
       contractInfo={contractInfo}
         images={[contractInfo.image || 'https://via.placeholder.com/150']}
       />
@@ -54,6 +56,7 @@ function ReviewPage({ contractInfo, reviews }: Props) {
         totalReviews={reviews?.length}
         averageRating={averageRating}
         holders={contractInfo.holders}
+        contractInfo={contractInfo}
         marketCap={contractInfo.marketCap}
         emojiStats={stats?.emojiStats}
       />

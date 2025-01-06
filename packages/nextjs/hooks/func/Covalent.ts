@@ -267,19 +267,33 @@ export async function fetchContractMetadata(address: string, chainId: number) {
     const contractType = await getContractType(normalizedAddress, chainId);
     console.log("Contract type:", contractType);
 
+    const fetchWithContentCheck = async (url: string) => {
+      const response = await fetch(url);
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return await response.json();
+      }
+      throw new Error(`Invalid response type: ${contentType}`);
+    };
+
     if (contractType === "ERC721" || contractType === "ERC1155") {
       // For NFTs, use the NFT-specific endpoints
       const nftUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${normalizedAddress}/nft_token_ids/?key=${COVALENT_API_KEY}`;
-      const nftResponse = await fetch(nftUrl);
-      const nftData = await nftResponse.json();
+      const nftData = await fetchWithContentCheck(nftUrl);
 
-      if (nftResponse.ok && nftData?.data?.items?.length > 0) {
+      // Get floor price
+      const floorPriceUrl = `https://api.covalenthq.com/v1/${chainName}/nft_market/${normalizedAddress}/floor_price/?key=${COVALENT_API_KEY}`;
+      const floorPriceData = await fetchWithContentCheck(floorPriceUrl);
+      console.log("Floor Price Data:", floorPriceData);
+
+      const floorPrice = floorPriceData?.data?.items?.[0]?.floor_price_quote || 0;
+
+      if (nftData?.data?.items?.length > 0) {
         // Get collection metadata using the first token
         const metadataUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${normalizedAddress}/nft_metadata/${nftData.data.items[0].token_id}/?key=${COVALENT_API_KEY}`;
-        const metadataResponse = await fetch(metadataUrl);
-        const metadataData = await metadataResponse.json();
+        const metadataData = await fetchWithContentCheck(metadataUrl);
 
-        if (metadataResponse.ok && metadataData?.data?.items?.[0]) {
+        if (metadataData?.data?.items?.[0]) {
           const nftInfo = metadataData.data.items[0];
           const totalSupply = nftData.data.pagination.total_count;
 
@@ -291,48 +305,56 @@ export async function fetchContractMetadata(address: string, chainId: number) {
             type: contractType,
             image: nftInfo.nft_data?.[0]?.external_data?.image || nftInfo.logo_url,
             totalSupply,
-            floorPrice: null // Could fetch from another API if needed
+            holders: nftData.data.pagination.total_count,
+            marketCap: floorPrice, // For NFTs, use floor price as marketCap
+            createdAt: new Date().toISOString()
           };
         }
       }
     } else {
       // For tokens, use the token endpoints
       const tokenUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${normalizedAddress}/?key=${COVALENT_API_KEY}`;
-      const tokenResponse = await fetch(tokenUrl);
-      const tokenData = await tokenResponse.json();
+      const tokenData = await fetchWithContentCheck(tokenUrl);
+      console.log("TokenData", tokenData);
 
       // Fetch balance data as backup
       const balanceUrl = `https://api.covalenthq.com/v1/${chainName}/address/${normalizedAddress}/balances_v2/?key=${COVALENT_API_KEY}`;
-      const balanceResponse = await fetch(balanceUrl);
-      const balanceData = await balanceResponse.json();
+      const balanceData = await fetchWithContentCheck(balanceUrl);
+      console.log("Balance", balanceData);
 
-      // Fetch holders count
-      const holdersUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${normalizedAddress}/token_holders_v2/?key=${COVALENT_API_KEY}`;
-      const holdersResponse = await fetch(holdersUrl);
-      const holdersData = await holdersResponse.json();
-
-      const tokenInfo = tokenData?.data?.items?.[0];
+      // Find token info in balance data if token endpoint failed
       const balanceInfo = balanceData?.data?.items?.find(
         (item: any) => item.contract_address?.toLowerCase() === normalizedAddress.toLowerCase()
       );
-      const holdersCount = holdersData?.data?.pagination?.total_count;
 
-      if (!tokenInfo && !balanceInfo) {
+      // Fetch holders count
+      const holdersUrl = `https://api.covalenthq.com/v1/${chainName}/tokens/${normalizedAddress}/token_holders_v2/?key=${COVALENT_API_KEY}`;
+      const holdersData = await fetchWithContentCheck(holdersUrl);
+      console.log("Holders", holdersData);
+
+      // Get market data
+      const priceUrl = `https://api.covalenthq.com/v1/pricing/historical_by_addresses_v2/${chainName}/USD/${normalizedAddress}/`;
+      const priceResponse = await fetch(`${priceUrl}?key=${COVALENT_API_KEY}`);
+      const priceData = await priceResponse.json();
+      const latestPrice = priceData?.data?.[0]?.items?.[0]?.price || 0;
+
+      const info = tokenData?.data?.items?.[0] || balanceInfo;
+      if (!info) {
+        console.error('No token info found in either token or balance data');
         return null;
       }
 
-      const info = tokenInfo || balanceInfo;
-      
       return {
         address: normalizedAddress,
         chainId: chainId,
-        name: info?.contract_name || "Unknown Contract",
-        ticker: info?.contract_ticker_symbol || "",
+        name: info.contract_name || "Unknown Contract",
+        ticker: info.contract_ticker_symbol || "",
         type: contractType,
-        image: info?.logo_url || null,
-        totalSupply: info?.total_supply,
-        holders: holdersCount,
-        marketCap: info?.market_cap_usd || info?.quote_rate || null
+        image: info.logo_url || null,
+        totalSupply: info.total_supply,
+        holders: holdersData?.data?.pagination?.total_count,
+        marketCap: latestPrice,
+        createdAt: new Date().toISOString()
       };
     }
 

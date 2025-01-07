@@ -1,10 +1,9 @@
 // hooks/useGaslessReview.ts
 import { useWalletClient } from "wagmi";
-import { getPaymasterParams } from "../utils/paymaster";
 import { createPublicClient, http, encodeFunctionData } from "viem";
 import { chains } from "@lens-network/sdk/viem";
 import { ReviewRegistryAbi, ReviewRegistryAddress } from "~~/lib/foundryGenerated";
-import { eip712WalletActions } from "viem/zksync";
+import { eip712WalletActions, getGeneralPaymasterInput } from "viem/zksync";
 
 export function useGaslessReview() {
   const { data: walletClient } = useWalletClient();
@@ -25,17 +24,30 @@ export function useGaslessReview() {
     try {
       const paymasterAddress = "0x2F94A64652c950e6782F2382318d715f5E74B975";
 
+      // Get properly formatted paymaster input
+      const paymasterInput = getGeneralPaymasterInput({
+        innerInput: "0x", // Empty input for our general paymaster
+      });
+
+      // Encode the function call
+      const data = encodeFunctionData({
+        abi: ReviewRegistryAbi,
+        functionName: "addReview",
+        args: [metadataURI, contractAddressToReview, rating],
+      });
+
+      console.log("Paymaster input:", paymasterInput);
+
       // Extend wallet client with zkSync actions
       const zkWalletClient = walletClient.extend(eip712WalletActions());
 
       // Send transaction with paymaster
-      const txHash = await zkWalletClient.writeContract({
-        address: ReviewRegistryAddress[37111],
-        abi: ReviewRegistryAbi,
-        functionName: "addReview",
-        args: [metadataURI, contractAddressToReview, rating],
+      const txHash = await zkWalletClient.sendTransaction({
+        to: ReviewRegistryAddress[37111],
+        data,
         paymaster: paymasterAddress,
-        paymasterInput: "0xc2722916" // General paymaster flow selector
+        paymasterInput,
+        value: 0n
       });
 
       console.log("Transaction hash:", txHash);

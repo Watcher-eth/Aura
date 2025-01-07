@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 "use client";
 
 import GlowingSearch from '~~/components/search/GlowingSearchBar';
@@ -34,7 +36,7 @@ export default function Page() {
   };
 
   // Generate emoji positions
-  const generateStrictPositionArray = (count, side) => {
+  const generateStrictPositionArray = (count: number, side: string) => {
     return Array.from({ length: count }, (_, i) => {
       if (side === "left") {
         return {

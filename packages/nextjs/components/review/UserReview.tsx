@@ -6,7 +6,6 @@ import { Button } from "~~/components/ui/button";
 import { Star } from 'lucide-react';
 import { Review } from '~~/__generated__/graphql';
 import { storageClient } from '~~/utils/storageClient';
-import { shortenAddress } from '~~/utils/address';
 import { emotions } from '~~/components/modals/steps/ReviewStepOne';
 
 interface ReviewMetadata {

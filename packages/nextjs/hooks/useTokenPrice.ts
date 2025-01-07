@@ -8,17 +8,19 @@ interface PriceData {
   price: number;
 }
 
+interface CovalentPriceItem {
+  date: string;
+  price: number;
+  pretty_price: string;
+}
+
 interface CovalentPriceResponse {
   data: Array<{
     contract_address: string;
     contract_decimals: number;
     contract_name: string;
     contract_ticker_symbol: string;
-    items: Array<{
-      date: string;
-      price: number;
-      pretty_price: string;
-    }>;
+    items: CovalentPriceItem[];
   }>;
 }
 
@@ -55,7 +57,7 @@ async function fetchPriceData(address: string, chainId: number): Promise<PriceDa
     throw new Error(`Failed to fetch price data: ${response.status}`);
   }
 
-  const jsonData = await response.json();
+  const jsonData = await response.json() as CovalentPriceResponse;
   console.log('Raw API Response:', jsonData);
 
   // Check if we have valid data
@@ -65,13 +67,13 @@ async function fetchPriceData(address: string, chainId: number): Promise<PriceDa
   }
 
   // Transform the data for the chart
-  const prices = jsonData.data[0].items.map(item => ({
+  const prices = jsonData.data[0].items.map((item: CovalentPriceItem) => ({
     date: new Date(item.date).toLocaleDateString('en-US', {
       month: 'numeric',
       day: 'numeric'
     }),
     price: Number(item.price)
-  }))
+  }));
 
   console.log('Transformed prices:', prices);
 

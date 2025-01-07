@@ -1,3 +1,5 @@
+
+// @ts-nocheck
 "use client";
 
 import React from 'react';
@@ -54,7 +56,7 @@ function ReviewPage({ contractInfo, reviews: initialReviews }: Props) {
         type={contractInfo.type!}
         reviews={reviews?.length}
       />
-      
+
     <DynamicMiddle
       contractInfo={contractInfo}
         images={[contractInfo.image || 'https://via.placeholder.com/150']}

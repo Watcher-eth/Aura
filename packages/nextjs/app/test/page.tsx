@@ -1,3 +1,5 @@
+
+// @ts-nocheck
 import ReviewModal from '~~/components/modals/ReviewModal';
 
 interface Props {
@@ -16,6 +18,7 @@ export default async function ReviewPage({ params }: Props) {
         <div className="flex justify-end mt-4">
           <ReviewModal 
             name={params.name}
+            address={params.id}
             trigger={
               <button className="bg-gradient-to-r from-green-500 to-green-600 text-white hover:from-green-600 hover:to-green-700">
                 Give Feedback

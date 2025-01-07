@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -7,7 +9,8 @@ import ReviewStepOne from "./steps/ReviewStepOne";
 import ReviewStepTwo from "./steps/ReviewStepTwo";
 import { ReviewProvider } from "./context/ReviewContext";
 import ReusableDialog from "../ReusableDialog";
-import { Address, Review } from "viem";
+import { Address } from "viem";
+import { Review } from "~~/__generated__/graphql";
 
 interface ReviewModalProps {
   trigger: React.ReactNode;

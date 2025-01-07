@@ -1,13 +1,10 @@
 "use client";
 
 import React, { useCallback, useRef, useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Bars3Icon, BugAntIcon } from "@heroicons/react/24/outline";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { FaucetButton, RainbowKitCustomConnectButton } from "~~/components/scaffold-eth";
-import { useOutsideClick } from "~~/hooks/scaffold-eth";
 import { ConnectKitButton } from "connectkit";
 
 type HeaderMenuLink = {
@@ -67,8 +64,8 @@ export const Header = () => {
   const isReviewPage = pathname?.startsWith('/r/');
   
   return (
-    <div className={`flex flex-row items-center justify-between px-3 md:px-8 pb-0 -mt-2.5  w-full z-50 ${
-      isReviewPage ? 'relative' : 'fixed top-0'
+    <div className={`flex flex-row items-center justify-between px-3 md:px-8 pb-0 -mt-2.5 w-full z-50 ${
+      isReviewPage ? 'relative' : 'fixed top-0 bg-white/80 '
     }`}>
       <Link href="/" className="flex items-center -ml-6">
         <img alt="Logo" className="w-[10rem]" src="/Logo1.png" />

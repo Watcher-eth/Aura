@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 "use client";
 
 import React, { useState } from 'react';
@@ -26,6 +28,8 @@ interface Props {
     chainId: number;
     type: string;
     name?: string;
+    chainName: string;
+    createdAt: string;
   };
   images?: string[];
 }

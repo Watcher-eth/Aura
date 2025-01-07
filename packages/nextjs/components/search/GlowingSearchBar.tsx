@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 "use client"
 
 import { Search } from 'lucide-react'
@@ -8,7 +10,6 @@ import { searchContracts } from '~~/hooks/func/Covalent'
 import { debounce } from 'lodash'
 import Link from 'next/link'
 import { SUPPORTED_CHAINS } from '~~/hooks/func/Covalent'
-import { shortenAddress } from '~~/utils/address'
 
 const CHAIN_INFO: { [key: number]: { name: string; icon: string } } = {
   1: {

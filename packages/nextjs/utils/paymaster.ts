@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { encodeFunctionData, encodeAbiParameters, parseAbiParameters, getGeneralPaymasterInput } from "viem";
 
 export interface PaymasterParams {

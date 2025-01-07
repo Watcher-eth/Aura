@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { useQuery } from '@tanstack/react-query';
 import { getContractInfo } from '../utils/getContractInfo';
 

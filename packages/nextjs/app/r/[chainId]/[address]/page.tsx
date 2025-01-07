@@ -27,8 +27,12 @@ export default async function Review({ params }: Props) {
     notFound();
   }
 
+  // Normalize address case for querying
+  const normalizedAddress = address.toLowerCase();
+  
   // Empty reviews array for now
-  const reviews = await getReviewsForAddress(address)
+  const reviews = await getReviewsForAddress(normalizedAddress)
+  console.log("Review fetched:", address, reviews);
 
   return (
     <ReviewPage 

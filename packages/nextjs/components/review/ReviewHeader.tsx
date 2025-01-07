@@ -14,6 +14,7 @@ interface ReviewHeaderProps {
   image: string;
   createdAt: string;
   type: string
+  reviews: number
 }
 
 function ReviewHeader({
@@ -27,7 +28,8 @@ function ReviewHeader({
   ticker,
   image,
   createdAt,
-  type
+  type,
+  reviews
 }: ReviewHeaderProps) {
   const shortAddress = `${address?.slice(0, 6)}...${address?.slice(-4)}`;
   
@@ -105,7 +107,7 @@ function ReviewHeader({
             {renderStars(rating)}
           </div>
           <div className="text-sm text-gray-400 mt-1 self-end">
-            Average out of {numberOfRatings} {numberOfRatings === 1 ? 'Rating' : 'Ratings'}
+            Average out of {reviews ?? numberOfRatings} {reviews === 1 ? 'Rating' : 'Ratings'}
           </div>
         </div>
       </div>

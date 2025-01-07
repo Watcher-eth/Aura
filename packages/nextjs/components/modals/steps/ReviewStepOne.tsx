@@ -30,7 +30,9 @@ export const emotions: Emotion[] = [
   { emoji: "📉", label: "Bearish" },
   { emoji: "🤡", label: "Clown" },
   { emoji: "💰", label: "Moonbag" },
-  { emoji: "💸", label: "Airdrop" }
+  { emoji: "💸", label: "Airdrop" },
+  { emoji: "😢", label: "Bad" },
+  { emoji: "😔", label: "Eeeh" },
 ];
 
 const ReviewStepOne: React.FC<ReviewStepOneProps> = ({ onNext, address }) => {

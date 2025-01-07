@@ -31,7 +31,7 @@ const emotionGradients = [
 
 interface ReviewStepTwoProps {
   onBack: () => void;
-  onSubmit: () => void;
+  onSubmit: (review: any) => void;
   address: `0x${string}`;
 }
 
@@ -84,7 +84,7 @@ const ReviewStepTwo: React.FC<ReviewStepTwoProps> = ({ onBack, onSubmit, address
       );
 
       console.log('Review submitted successfully', { txHash, receipt });
-      onSubmit();
+      onSubmit({createdBy: userAddress, ...reviewData, metadataURI: uri});
     } catch (error) {
       console.error('Error submitting review:', error);
       setError(error instanceof Error ? error.message : "Failed to submit review");

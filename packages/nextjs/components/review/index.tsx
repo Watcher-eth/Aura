@@ -1,10 +1,12 @@
+"use client";
+
 import React from 'react';
 import ReviewHeader from './ReviewHeader';
 import StatsOverview from './StatsOverview';
 import { Review } from '~~/__generated__/graphql';
 import UserReview from './UserReview';
 import ReviewModal from '../modals/ReviewModal';
-import { UserReviewPlaceholder } from './UserReviewPlaceholder';
+import {UserReviewPlaceholder} from './UserReviewPlaceholder';
 import DynamicMiddle from './DynamicMiddle';
 
 interface ContractInfo {
@@ -24,7 +26,8 @@ interface Props {
   reviews: Review[]
 }
 
-function ReviewPage({ contractInfo, reviews }: Props) {
+function ReviewPage({ contractInfo, reviews: initialReviews }: Props) {
+  const [reviews, setReviews] = React.useState<Review[]>(initialReviews || []);
   console.log("Contract Info in Review Page:", contractInfo);
   console.log("Reviews:", reviews?.length > 0 );
 
@@ -33,6 +36,11 @@ function ReviewPage({ contractInfo, reviews }: Props) {
     ? reviews?.reduce((sum, review) => sum + review.rating, 0) / reviews.length
     : 0;
 
+  const addOptimisticReview = (newReview: Review) => {
+    setReviews(prev => [newReview, ...prev]);
+  };
+
+  console.log("Reviews:", initialReviews);
   return (
     <div className="container px-4 pr-3 md:px-0 md:pr-0 -pt-[1rem]">
       <ReviewHeader
@@ -44,6 +52,7 @@ function ReviewPage({ contractInfo, reviews }: Props) {
         ticker={contractInfo.ticker}
         createdAt={contractInfo.createdAt}
         type={contractInfo.type!}
+        reviews={reviews?.length}
       />
     <DynamicMiddle
       contractInfo={contractInfo}
@@ -60,7 +69,7 @@ function ReviewPage({ contractInfo, reviews }: Props) {
         emojiStats={stats?.emojiStats}
       />
 
-      <div className="w-full space-y-6 mt-8 mb-8 items-center">
+      <div className="w-full space-y-6 mt-10 mb-8 items-center">
         {reviews?.length > 0 ? <div className="flex flex-col space-y-4 w-full">{reviews.map((review) => (
           <UserReview
             key={review.id}
@@ -73,6 +82,7 @@ function ReviewPage({ contractInfo, reviews }: Props) {
             <ReviewModal
             address={contractInfo.address}
               name={contractInfo.name ?? contractInfo.address}
+              onReviewSubmitted={addOptimisticReview}
               trigger={
                 <button className='px-4 py-1.5 rounded-md border-2 border-[#ededed] bg-[white]'>
                   Write a Review
@@ -81,15 +91,16 @@ function ReviewPage({ contractInfo, reviews }: Props) {
             /></div>
           </div>
         </div> : 
-        <div className='flex flex-col w-full items-center'>{[0,1,2,3,4].map((index) => (<UserReviewPlaceholder key={index}/>))}
+        <div className='flex flex-col w-full items-center'>{[0].map((index) => (<UserReviewPlaceholder key={index}/>))}
         <div className='h-[40vh] w-full absolute bottom-0 z-[1] bg-gradient-to-t from-white to-transparent'/>
         <div className="relative z-[2] flex flex-col items-center">
           <h1 className="text-[50px] font-bold -mt-[4rem]">No Reviews yet..</h1>
           <p className="text-gray-600 mt-2 text-lg">Be the first to review this contract</p>
-          <div className="flex justify-end mt-4 mb-20">
+          <div className="flex justify-end mt-4">
             <ReviewModal
             address={contractInfo.address}
               name={contractInfo.name ?? contractInfo.address}
+              onReviewSubmitted={addOptimisticReview}
               trigger={
                 <button className='px-4 py-1.5 rounded-md border-2 border-[#ededed] bg-[white]'>
                   Write a Review

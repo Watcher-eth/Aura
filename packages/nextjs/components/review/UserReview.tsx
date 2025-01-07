@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "~~/components/ui/avatar";
 import { Card, CardContent } from "~~/components/ui/card";
 import { Button } from "~~/components/ui/button";
@@ -7,6 +7,15 @@ import { Star } from 'lucide-react';
 import { Review } from '~~/__generated__/graphql';
 import { storageClient } from '~~/utils/storageClient';
 import { shortenAddress } from '~~/utils/address';
+import { emotions } from '~~/components/modals/steps/ReviewStepOne';
+
+interface ReviewMetadata {
+  address: string;
+  rating: number;
+  emotions: string[];
+  content: string;
+  timestamp: string;
+}
 
 interface Reaction {
   emoji: string;
@@ -24,6 +33,7 @@ function UserReview({
   rating,
   metadataURI
 }: UserReviewProps) {
+  const [reviewData, setReviewData] = useState<ReviewMetadata | null>(null);
   const [localReactions] = useState<Reaction[]>([
     { emoji: "🔥", selected: false },
     { emoji: "👀", selected: false },
@@ -34,9 +44,24 @@ function UserReview({
 
   const resolveMetadata = async () => {
     if (metadataURI) {
-      const url = await storageClient.resolve(metadataURI);
-      return url;
+      try {
+        const url = await storageClient.resolve(metadataURI);
+        const response = await fetch(url);
+        const data = await response.json();
+        setReviewData(data);
+      } catch (error) {
+        console.error("Error resolving metadata:", error);
+      }
     }
+  };
+
+  useEffect(() => {
+    resolveMetadata();
+  }, [metadataURI]);
+
+  const getEmojiForLabel = (label: string) => {
+    const emotion = emotions.find(e => e.label === label);
+    return emotion?.emoji || label;
   };
 
   return (
@@ -54,10 +79,9 @@ function UserReview({
               </div>
               <div className="flex items-center space-x-1">
               <span className="text-[2.5rem] font-bold text-[#303030] mr-1.5">{rating}</span>
-
                 <div className="flex text-[3rem]">
                   {[...Array(rating)].map((_, index) => (
-                   <div>⭐️</div>
+                   <div key={index}>⭐️</div>
                   ))}
                 </div>
               </div>
@@ -66,22 +90,44 @@ function UserReview({
         </div>
 
         <div className="space-y-4 text-gray-600 mb-6">
-          <p>I've been using Aave for over a year now, and it's hands down one of the best DeFi protocols out there. The smart contract is rock-solid, with audits to back its security. The interface is smooth and intuitive, even for newcomers, and the variety of assets supported is impressive.</p>
-          <p>One thing I love is the transparency—every interaction is traceable on-chain, giving me confidence in where my funds are. The flash loan feature is a game-changer for advanced users, though it might feel a bit intimidating if you're just starting out.</p>
-          <p>That said, gas fees can still bite when the network is congested, and borrowing rates sometimes fluctuate more than I'd like. Still, compared to other lending protocols, Aave sets a high standard.</p>
-          <p>If you're looking for a secure and flexible way to lend or borrow in DeFi, Aave is a must-try. Just be sure to DYOR and start small if you're new to decentralized finance! ↗</p>
+          {reviewData?.content ? (
+            <p>{reviewData.content}</p>
+          ) : (
+            
+            <div className="mt-4 space-y-3">
+            <div className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-4 w-11/12 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-4 w-10/12 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-4 w-full bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-4 w-11/12 bg-gray-200 rounded animate-pulse"></div>
+            <div className="h-4 w-10/12 bg-gray-200 rounded animate-pulse"></div>
+          </div>
+    
+          )}
         </div>
 
-        <div className="flex flex-wrap gap-2 self-end justify-end">
-          {localReactions.map((reaction) => (
-            <Button
-              key={reaction.emoji}
-              variant="outline"
-              className="text-lg border-0 px-2 py-1 h-auto"
-            >
-              {reaction.emoji}
-            </Button>
-          ))}
+        <div className="flex flex-wrap gap-1 self-end justify-end">
+          {reviewData?.emotions ? (
+            reviewData.emotions.map((emotionLabel, index) => (
+              <Button
+                key={index}
+                variant="outline"
+                className="text-xl border-0 px-1 py-1 h-auto"
+              >
+                {getEmojiForLabel(emotionLabel)}
+              </Button>
+            ))
+          ) : (
+  <div className="flex items-center justify-between mt-4">
+        <div className="h-0 w-16 bg-gray-200 rounded animate-pulse"></div>
+        <div className="flex items-center space-x-2 mt-4">
+        <div className="h-6 w-6 bg-gray-200 rounded-full animate-pulse"></div>
+        <div className="h-6 w-6 bg-gray-200 rounded-full animate-pulse"></div>
+        <div className="h-6 w-6 bg-gray-200 rounded-full animate-pulse"></div>
+        <div className="h-6 w-6 bg-gray-200 rounded-full animate-pulse"></div>
+      </div>      
+
+</div>          )}
         </div>
       </CardContent>
     </Card>

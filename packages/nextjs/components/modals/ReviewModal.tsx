@@ -7,15 +7,16 @@ import ReviewStepOne from "./steps/ReviewStepOne";
 import ReviewStepTwo from "./steps/ReviewStepTwo";
 import { ReviewProvider } from "./context/ReviewContext";
 import ReusableDialog from "../ReusableDialog";
-import { Address } from "viem";
+import { Address, Review } from "viem";
 
 interface ReviewModalProps {
   trigger: React.ReactNode;
   name: string;
   address: Address;
+  onReviewSubmitted?: (review: Review) => void;
 }
 
-const ReviewModal: React.FC<ReviewModalProps> = ({ trigger, name, address }) => {
+const ReviewModal: React.FC<ReviewModalProps> = ({ trigger, name, address, onReviewSubmitted }) => {
   const [step, setStep] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
   const params = useParams();
@@ -29,7 +30,10 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ trigger, name, address }) => 
     setStep(1);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (review: Review) => {
+    if (onReviewSubmitted) {
+      onReviewSubmitted(review);
+    }
     setIsOpen(false);
     setStep(1);
   };
@@ -56,6 +60,7 @@ const ReviewModal: React.FC<ReviewModalProps> = ({ trigger, name, address }) => 
         trigger={trigger}
         isOpen={isOpen}
         setIsOpen={setIsOpen}
+        title={step === 1 ? "How was your experience?" : "Write a review"}
         onClose={() => {
           setIsOpen(false);
           setStep(1);

@@ -234,15 +234,15 @@ export default function Page() {
         {/* Footer */}
         <div className="flex gap-6 text-sm text-gray-500">
           <a href="#" className="hover:text-gray-900 hover:scale-105 flex items-center gap-1">
-          <img src='https://i.ebayimg.com/images/g/-QEAAOSw2~pheAfW/s-l400.jpg' className="w-4 h-4 rounded-full object-cover" />
-            Buy me a Coffee
+          <img src='https://imgs.search.brave.com/_8hksYlDi2K91gsVoOwZE2kCNY7TZ9NHOgO-MdrQ-kA/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYWZkYjAyNWE4/MDFjMDJkYjgxNWUw/OGZjMjEwZjk0ZmMy/NWM0NWVhNWYwYzQx/YWU0MTNkZjdmY2Jm/MGFkZGExOC9qb2tl/cmFjZS5pby8' className="w-4 h-4 rounded-full object-cover" />
+            Vote for me
           </a>
           <a href="#" className="hover:text-gray-900">X</a>
-          <a href="#" className="hover:text-gray-900 hover:scale-105 flex items-center gap-1">
+          <a href="https://twitter.com/watcher2nd" className="hover:text-gray-900 hover:scale-105 flex items-center gap-1">
           <img src='https://upload.wikimedia.org/wikipedia/commons/thumb/2/21/1690643591twitter-x-logo-png.webp/1024px-1690643591twitter-x-logo-png.webp.png' className="w-4 h-4 rounded-full object-cover" />
           Twitter
           </a>
-          <a href="#" className="hover:text-gray-900 hover:scale-105 flex items-center gap-1">
+          <a href="https://hey.xyz/u/watchereth" className="hover:text-gray-900 hover:scale-105 flex items-center gap-1">
             <img src='https://pbs.twimg.com/profile_images/1856110197418438656/lktVUaQ2_200x200.jpg' className="w-4 h-4 rounded-full object-cover" />
             Lens
           </a>

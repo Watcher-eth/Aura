@@ -63,8 +63,13 @@ export const HeaderMenuLinks = () => {
  * Site header
  */
 export const Header = () => {
+  const pathname = usePathname();
+  const isReviewPage = pathname?.startsWith('/r/');
+  
   return (
-    <div className="flex flex-row items-center justify-between px-3 md:px-8 pb-1 -mt-2.5 backdrop-blur-xl">
+    <div className={`flex flex-row items-center justify-between px-3 md:px-8 pb-0 -mt-2.5  w-full z-50 ${
+      isReviewPage ? 'relative' : 'fixed top-0'
+    }`}>
       <Link href="/" className="flex items-center -ml-6">
         <img alt="Logo" className="w-[10rem]" src="/Logo1.png" />
       </Link>

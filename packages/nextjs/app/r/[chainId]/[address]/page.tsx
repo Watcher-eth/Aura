@@ -32,7 +32,6 @@ export default async function Review({ params }: Props) {
   
   // Empty reviews array for now
   const reviews = await getReviewsForAddress(checksumAddress(normalizedAddress))
-  console.log("Review fetched:", address, reviews);
 
   return (
     <ReviewPage 

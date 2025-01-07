@@ -1,4 +1,4 @@
-import { encodeFunctionData } from "viem";
+import { encodeFunctionData, encodeAbiParameters, parseAbiParameters } from "viem";
 
 export interface PaymasterParams {
   type: "General";
@@ -6,13 +6,16 @@ export interface PaymasterParams {
   paymasterInput: string;
 }
 
-// The general paymaster flow selector from IPaymasterFlow
-const GENERAL_SELECTOR = "0x4E9E0eA7";
+// The general paymaster flow selector from IPaymasterFlow interface
+const PAYMASTER_GENERAL_SELECTOR = "0xc2722916";
 
 export async function getPaymasterParams(paymasterAddress: string): Promise<PaymasterParams> {
+  // Empty bytes for general flow - no additional parameters needed
+  const paymasterInput = PAYMASTER_GENERAL_SELECTOR;
+
   return {
     type: "General",
     innerInput: new Uint8Array(),
-    paymasterInput: GENERAL_SELECTOR
+    paymasterInput
   };
 }

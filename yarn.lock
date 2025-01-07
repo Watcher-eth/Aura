@@ -4083,6 +4083,7 @@ __metadata:
     vercel: ~39.1.3
     viem: 2.21.54
     wagmi: 2.13.4
+    zksync-web3: ^0.17.1
     zustand: ~5.0.0
   languageName: unknown
   linkType: soft
@@ -9231,7 +9232,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:~5.7.1":
+"ethers@npm:~5.7.0, ethers@npm:~5.7.1":
   version: 5.7.2
   resolution: "ethers@npm:5.7.2"
   dependencies:
@@ -17627,6 +17628,17 @@ __metadata:
   version: 0.8.15
   resolution: "zen-observable@npm:0.8.15"
   checksum: b7289084bc1fc74a559b7259faa23d3214b14b538a8843d2b001a35e27147833f4107590b1b44bf5bc7f6dfe6f488660d3a3725f268e09b3925b3476153b7821
+  languageName: node
+  linkType: hard
+
+"zksync-web3@npm:^0.17.1":
+  version: 0.17.1
+  resolution: "zksync-web3@npm:0.17.1"
+  dependencies:
+    ethers: ~5.7.0
+  peerDependencies:
+    ethers: ~5.7.0
+  checksum: bb3dae1f7848d2e46956f8238285164f434ecce379e9489aa4ff5dcaf58d73c767dd32f982d44e8b7ca60a63e3673fa8580ab854e4764049fc508517b48eb914
   languageName: node
   linkType: hard
 

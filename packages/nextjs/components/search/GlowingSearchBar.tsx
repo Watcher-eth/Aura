@@ -149,8 +149,8 @@ export default function GlowingSearch() {
         {(isSearching && searchValue) && (
           <div className="absolute top-full left-0 min-h-[35vh] right-0 mt-2 bg-white/20 backdrop-blur-lg border-2 border-[#ededed]/40 rounded-lg shadow-lg p-4 max-h-[60vh] overflow-y-auto w-full">
             {isLoading ? (
-              <div className="flex items-center justify-center py-4">
-                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400"></div>
+              <div className="flex items-center h-full w-full justify-center py-4">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 mt-4 border-gray-200"></div>
               </div>
             ) : searchResults.length > 0 ? (
               <div className="space-y-4 w-full">

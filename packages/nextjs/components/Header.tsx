@@ -65,7 +65,7 @@ export const Header = () => {
   
   return (
     <div className={`flex flex-row items-center justify-between px-3 md:px-8 pb-0 -mt-2.5 w-full z-50 ${
-      isReviewPage ? 'relative' : 'fixed top-0 bg-white/80 '
+      isReviewPage ? 'relative' : 'fixed top-0 '
     }`}>
       <Link href="/" className="flex items-center -ml-6">
         <img alt="Logo" className="w-[10rem]" src="/Logo1.png" />

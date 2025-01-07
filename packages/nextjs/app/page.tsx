@@ -235,7 +235,7 @@ export default function Page() {
 
         {/* Footer */}
         <div className="flex gap-6 text-sm text-gray-500">
-          <a href="#" className="hover:text-gray-900 hover:scale-105 flex items-center gap-1">
+          <a href="https://jokerace.io/contest/polygon/0x552bdf3d0acfa0bc398607fd675d3b4cce6aabdf/submission/103558013483776032367171994304046960375565668974039279723888742064922035080033" className="hover:text-gray-900 hover:scale-105 flex items-center gap-1">
           <img src='https://imgs.search.brave.com/_8hksYlDi2K91gsVoOwZE2kCNY7TZ9NHOgO-MdrQ-kA/rs:fit:32:32:1:0/g:ce/aHR0cDovL2Zhdmlj/b25zLnNlYXJjaC5i/cmF2ZS5jb20vaWNv/bnMvYWZkYjAyNWE4/MDFjMDJkYjgxNWUw/OGZjMjEwZjk0ZmMy/NWM0NWVhNWYwYzQx/YWU0MTNkZjdmY2Jm/MGFkZGExOC9qb2tl/cmFjZS5pby8' className="w-4 h-4 rounded-full object-cover" />
             Vote for me
           </a>

@@ -1074,6 +1074,7 @@ export const IMulticall3Abi = [
 /**
  *
  */
+
 export const ReviewRegistryAbi = [
   {
     type: 'function',
@@ -1136,6 +1137,12 @@ export const ReviewRegistryAbi = [
         indexed: false,
       },
       { name: 'rating', internalType: 'uint8', type: 'uint8', indexed: false },
+      {
+        name: 'metadataURI',
+        internalType: 'string',
+        type: 'string',
+        indexed: false,
+      },
     ],
     name: 'ReviewAdded',
   },
@@ -1145,7 +1152,7 @@ export const ReviewRegistryAbi = [
  *
  */
 export const ReviewRegistryAddress = {
-  37111: '0xBaf1813cFE54193D611fAB1a52A72c8BCC65c436',
+  37111: '0xA28eed926913C96186a1Cd0eD433e734AdD51906',
 } as const
 
 /**

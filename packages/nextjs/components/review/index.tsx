@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import ReviewHeader from './ReviewHeader';
 import StatsOverview from './StatsOverview';
 import { Review } from '~~/__generated__/graphql';
@@ -26,13 +26,13 @@ interface Props {
 
 function ReviewPage({ contractInfo, reviews }: Props) {
   console.log("Contract Info in Review Page:", contractInfo);
-  
+  console.log("Reviews:", reviews?.length > 0 );
+
   const stats ={}
   const averageRating = reviews?.length > 0
     ? reviews?.reduce((sum, review) => sum + review.rating, 0) / reviews.length
     : 0;
 
-  console.log("Contrac:", contractInfo);
   return (
     <div className="container px-4 pr-3 md:px-0 md:pr-0 -pt-[1rem]">
       <ReviewHeader
@@ -60,19 +60,35 @@ function ReviewPage({ contractInfo, reviews }: Props) {
         emojiStats={stats?.emojiStats}
       />
 
-<div className="w-full space-y-6 mt-8 items-center">
-        {reviews?.length > 0 ? reviews.map((review) => (
+      <div className="w-full space-y-6 mt-8 mb-8 items-center">
+        {reviews?.length > 0 ? <div className="flex flex-col space-y-4 w-full">{reviews.map((review) => (
           <UserReview
             key={review.id}
             {...review}
           />
-        )) : <div className='flex flex-col w-full items-center'>{[0,].map((index) => (<UserReviewPlaceholder key={index}/>))}</div>}
+        ))}
+        <div className='flex flex-col items-center'> <h1 className="text-[50px] font-bold mt-[1rem]">Add a Review..</h1>
+          <p className="text-gray-600 mt-2 text-lg">Be the first to review this contract</p>
+          <div className="flex justify-end mt-4 mb-20">
+            <ReviewModal
+            address={contractInfo.address}
+              name={contractInfo.name ?? contractInfo.address}
+              trigger={
+                <button className='px-4 py-1.5 rounded-md border-2 border-[#ededed] bg-[white]'>
+                  Write a Review
+                </button>
+              }
+            /></div>
+          </div>
+        </div> : 
+        <div className='flex flex-col w-full items-center'>{[0,1,2,3,4].map((index) => (<UserReviewPlaceholder key={index}/>))}
         <div className='h-[40vh] w-full absolute bottom-0 z-[1] bg-gradient-to-t from-white to-transparent'/>
         <div className="relative z-[2] flex flex-col items-center">
           <h1 className="text-[50px] font-bold -mt-[4rem]">No Reviews yet..</h1>
           <p className="text-gray-600 mt-2 text-lg">Be the first to review this contract</p>
           <div className="flex justify-end mt-4 mb-20">
             <ReviewModal
+            address={contractInfo.address}
               name={contractInfo.name ?? contractInfo.address}
               trigger={
                 <button className='px-4 py-1.5 rounded-md border-2 border-[#ededed] bg-[white]'>
@@ -81,7 +97,8 @@ function ReviewPage({ contractInfo, reviews }: Props) {
               }
             />
           </div>
-        </div>
+        </div></div>}
+        
       </div>
     </div>
   );

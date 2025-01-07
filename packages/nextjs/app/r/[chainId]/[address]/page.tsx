@@ -2,6 +2,7 @@ import { getAddress } from "viem";
 import { notFound } from 'next/navigation';
 import { SUPPORTED_CHAINS, fetchContractMetadata } from '~~/hooks/func/Covalent';
 import ReviewPage from '~~/components/review';
+import { getReviewsForAddress } from "~~/hooks/graphql/useGetReviewsForAddress";
 
 interface Props {
   params: {
@@ -19,13 +20,15 @@ export default async function Review({ params }: Props) {
 
   const address = getAddress(params.address);
   const contractInfo = await fetchContractMetadata(address, chainId);
-console.log("Contract Info:",address, contractInfo);
+
+
+  console.log("Contract Info:",address, contractInfo);
   if (!contractInfo) {
     notFound();
   }
 
   // Empty reviews array for now
-  const reviews = [];
+  const reviews = await getReviewsForAddress(address)
 
   return (
     <ReviewPage 

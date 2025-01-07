@@ -13,6 +13,7 @@ import { BlockieAvatar } from "~~/components/scaffold-eth";
 import { useInitializeNativeCurrencyPrice } from "~~/hooks/scaffold-eth";
 import { wagmiConfig } from "~~/services/web3/wagmiConfig";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
+import { GraphQlProvider } from "~~/lib/providers/ApolloProvider";
 
 const ScaffoldEthApp = ({ children }: { children: React.ReactNode }) => {
   useInitializeNativeCurrencyPrice();
@@ -53,7 +54,8 @@ export const ScaffoldEthAppWithProviders = ({ children }: { children: React.Reac
 
           <ConnectKitProvider theme="nouns">
 
-          <ScaffoldEthApp>{children}</ScaffoldEthApp>
+          <GraphQlProvider>
+          <ScaffoldEthApp>{children}</ScaffoldEthApp></GraphQlProvider>
           </ConnectKitProvider>
       </QueryClientProvider>
     </WagmiProvider>

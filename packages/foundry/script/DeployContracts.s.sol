@@ -17,14 +17,7 @@ contract DeployContracts is Script {
         ReviewRegistry reviewRegistry = new ReviewRegistry();
         // address reviewRegistryAddress = address(reviewRegistry);
 
-        // Deploy BountyManager contract with ReviewRegistry and fee address
-        // BountyManager bountyManager = new BountyManager(
-        //     reviewRegistryAddress,
-        //     deployer  // Use deployer as fee address
-        // );
-
         // console.log("ReviewRegistry deployed at:", reviewRegistryAddress);
-        // console.log("BountyManager deployed at:", address(bountyManager));
         // console.log("Fee address set to:", deployer);
 
         vm.stopBroadcast();

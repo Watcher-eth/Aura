@@ -13,8 +13,13 @@ contract ReviewRegistry {
     // Array to store reviews
     Review[] private reviews;
 
-    event ReviewAdded(uint256 indexed reviewId, address indexed reviewer, address contractName, uint8 rating);
-
+event ReviewAdded(
+    uint256 indexed reviewId, 
+    address indexed reviewer, 
+    address contractName, 
+    uint8 rating,
+    string metadataURI  
+);
     /// @notice Adds a new review to the registry.
     /// @param metadataURI URI pointing to the review metadata.
     /// @param contractAddress Name of the contract being reviewed.
@@ -33,8 +38,13 @@ contract ReviewRegistry {
         // Add the review to the array
         reviews.push(newReview);
 
-        emit ReviewAdded(reviews.length - 1, msg.sender, contractAddress, rating);
-    }
+    emit ReviewAdded(
+    reviews.length - 1, 
+    msg.sender, 
+    contractAddress, 
+    rating,
+    metadataURI  
+); }
 
     /// @notice Retrieves a review by its ID.
     /// @param reviewId The ID of the review to retrieve.

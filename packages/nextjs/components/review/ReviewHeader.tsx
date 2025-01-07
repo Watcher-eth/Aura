@@ -65,7 +65,7 @@ function ReviewHeader({
   };
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-4 -mt-2">
       <div className="flex items-center justify-between">      
         <div className="flex items-center space-x-1.5 mb-1.5">
           <div className='text-md text-gray-400'>{chainName} Network</div>

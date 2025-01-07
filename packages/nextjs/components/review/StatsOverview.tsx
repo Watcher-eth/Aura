@@ -73,8 +73,8 @@ export default function StatsOverview({
   console.log("lenght",data ?? "Yes")
 
   return (
-    <div className="w-full mt-4">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 ">
+    <div className="w-full mb-1 md:mb-0 md:mt-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 ">
         <div className="flex flex-col">
           <span className="text-md font-medium text-muted-foreground">
             Total Reviews

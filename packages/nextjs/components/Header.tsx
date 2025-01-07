@@ -63,27 +63,12 @@ export const HeaderMenuLinks = () => {
  * Site header
  */
 export const Header = () => {
-  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
-  const burgerMenuRef = useRef<HTMLDivElement>(null);
-  useOutsideClick(
-    burgerMenuRef,
-    useCallback(() => setIsDrawerOpen(false), []),
-  );
-
   return (
-    <div className="fixed top-0 w-full navbar min-h-0 flex-shrink-0 justify-between z-50  -mt-7  px-20 sm:px-7    mx-1.5 mt-3">
-      <div className="navbar-start w-auto lg:w-1/2">
-      
-        <Link href="/" passHref className="hidden lg:flex items-center gap-2 -ml-6 mr-3 -mt-2.5 rounded-lg shrink-0">
-            <img alt="SE2 logo" className="cursor-pointer   w-[10rem]  "   src="/Logo1.png" />
-      
-        </Link>
-
-      </div>
-      <div className="navbar-end flex-grow mr-4">
-        <ConnectKitButton />
-
-      </div>
+    <div className="flex flex-row items-center justify-between px-3 md:px-8 pb-1 -mt-2.5 backdrop-blur-xl">
+      <Link href="/" className="flex items-center -ml-6">
+        <img alt="Logo" className="w-[10rem]" src="/Logo1.png" />
+      </Link>
+      <ConnectKitButton />
     </div>
   );
 };

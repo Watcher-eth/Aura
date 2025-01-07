@@ -8,6 +8,7 @@ import { LENS_SEPOLIA_CHAIN_ID, LENS_CHAIN_ID  } from "./consts"
 interface Deployments {
     ReviewRegistry?: Address | Record<number, Address>
     BountyManager?: Address | Record<number, Address>
+    GaslessPaymaster?: Address | Record<number, Address>
 }
 
 function getFoundryDeployments(): Deployments {
@@ -104,6 +105,7 @@ export default defineConfig({
             deployments: {
                 ReviewRegistry: foundryDeployments.ReviewRegistry,
                 BountyManager: foundryDeployments.BountyManager,
+                GaslessPaymaster: foundryDeployments.GaslessPaymaster
             },
             exclude: [
                 "Scripts.sol/**",

@@ -210,13 +210,13 @@ const NFTGallery = ({ address, chainId, initialImages = [] }: { address?: string
       <Carousel opts={{ align: "start", loop: true }} className="w-full mx-auto">
         <CarouselContent>
           {images.map((image, index) => (
-            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
-              <Card className="overflow-hidden">
+            <CarouselItem key={index} className="md:basis-1/2 hover:scale-101 lg:basis-1/3">
+              <Card className="overflow-hidden ">
                 <div className="w-full h-0 pb-[100%] relative">
                   <img
                     src={image}
                     alt={`NFT ${index + 1}`}
-                    className="absolute inset-0 w-full h-full object-cover rounded-md"
+                    className="absolute hover:scale-101 inset-0 w-full h-full object-cover rounded-md"
                     loading={index === 0 ? "eager" : "lazy"}
                   />
                 </div>

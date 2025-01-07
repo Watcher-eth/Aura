@@ -1,4 +1,4 @@
-import { getAddress } from "viem";
+import { checksumAddress, getAddress } from "viem";
 import { notFound } from 'next/navigation';
 import { SUPPORTED_CHAINS, fetchContractMetadata } from '~~/hooks/func/Covalent';
 import ReviewPage from '~~/components/review';
@@ -31,7 +31,7 @@ export default async function Review({ params }: Props) {
   const normalizedAddress = address.toLowerCase();
   
   // Empty reviews array for now
-  const reviews = await getReviewsForAddress(normalizedAddress)
+  const reviews = await getReviewsForAddress(checksumAddress(normalizedAddress))
   console.log("Review fetched:", address, reviews);
 
   return (
